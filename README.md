@@ -5,12 +5,14 @@ I have been browsing to find a CRM that suits my needs. I found that I could eit
 
 ## Requirements
 ### Non functional requirements
-- [ ] To be written in Java
+- [ ] To be written in **Java**
+- [ ] We'll be using **IntelliJ** so the directory structure will reflect that.
+- [ ] We'll be using **Maven**
 - [ ] To run, like [OpenRefine](https://openrefine.org/) as a web service but on you local machine so that you do not require Internet activity and you do not have to consider all the security implications of running on public servers.
-- [ ] To use SparkJava with Jetty
+- [ ] To use **SparkJava** with **Jetty**
   - [ ] [https://sparkjava.com/tutorials/jetty-request-log](https://sparkjava.com/tutorials/jetty-request-log)
   - [ ] [https://sparkjava.com/tutorials/application-structure](https://sparkjava.com/tutorials/application-structure)
-- [ ] To use SQLite for a database
+- [ ] To use **SQLite** for a database
 
 ### Functional Requirements
 #### Contacts
