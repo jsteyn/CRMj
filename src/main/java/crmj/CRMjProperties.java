@@ -4,18 +4,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 public class CRMjProperties {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(CRMjProperties.class);
-    private static final File s_PROPERTIES_FILEPATH = new File(System.getProperty("user.home").concat("/.CRMj/crmj.properties"));
+    private static final Path s_CONFIG_DIRECTORY = Paths.get(System.getProperty("user.home"), ".CRMj");
+    private static final Path s_PROPERTIES_FILEPATH = s_CONFIG_DIRECTORY.resolve("crmj.properties");
 
     private final String m_portPropID = "server.port";
     private int m_port = 3141;
 
     public CRMjProperties() throws IOException {
         s_LOGGER.info("Loading properties: ".concat(s_PROPERTIES_FILEPATH.toString()));
-        if (s_PROPERTIES_FILEPATH.exists()) {
+        if (Files.exists(s_PROPERTIES_FILEPATH)) {
             loadPropertiesFromFile();
         } else {
             s_LOGGER.info("Properties file not found. Creating default");
@@ -34,7 +38,7 @@ public class CRMjProperties {
     private void loadPropertiesFromFile() throws IOException {
         Properties properties = new Properties();
 
-        FileInputStream stream = new FileInputStream(s_PROPERTIES_FILEPATH);
+        FileInputStream stream = new FileInputStream(s_PROPERTIES_FILEPATH.toFile());
         properties.load(stream);
         stream.close();
 
@@ -54,16 +58,16 @@ public class CRMjProperties {
     }
 
     private void savePropertiesToFile() throws IOException {
-        //noinspection ResultOfMethodCallIgnored
-        s_PROPERTIES_FILEPATH.getParentFile().mkdirs();
-        //noinspection ResultOfMethodCallIgnored
-        s_PROPERTIES_FILEPATH.createNewFile();
+        if (!Files.exists(s_PROPERTIES_FILEPATH)) {
+            Files.createDirectories(s_PROPERTIES_FILEPATH.getParent());
+            Files.createFile(s_PROPERTIES_FILEPATH);
+        }
 
         Properties properties = new Properties();
 
         properties.setProperty(m_portPropID, Integer.toString(m_port));
 
-        FileOutputStream stream = new FileOutputStream(s_PROPERTIES_FILEPATH);
+        FileOutputStream stream = new FileOutputStream(s_PROPERTIES_FILEPATH.toFile());
         properties.store(stream, "CRMj (Customer Relationship Management - Java/Jannetta) properties");
         stream.close();
     }
@@ -85,7 +89,7 @@ public class CRMjProperties {
         return value;
     }
 
-    public File getConfigLocation() {
+    public Path getConfigLocation() {
         return s_PROPERTIES_FILEPATH;
     }
 
