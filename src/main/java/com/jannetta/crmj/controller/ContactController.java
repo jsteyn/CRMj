@@ -9,6 +9,8 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -18,7 +20,7 @@ public class ContactController {
 
     public static Route getContact = (Request request, Response response) -> {
         Map<String, Object> model = new HashMap<>();
-        return ViewUtil.render(request, model, "/velocity/contact.vm");
+        return ViewUtil.render(request, model, Paths.get("/velocity/contact.vm"));
     };
 
     public static String addContact(Request request, Response response)  {
@@ -27,7 +29,7 @@ public class ContactController {
                 request.queryParams("lastname"));
         model.put(UUID.randomUUID().toString(), newContact);
 
-        return ViewUtil.render(request, model, "/velocity/contact_added.vm");
+        return ViewUtil.render(request, model, Paths.get("/velocity/contact_added.vm"));
     }
 
     public static String getUsername(String email) {

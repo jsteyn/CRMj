@@ -5,6 +5,7 @@ import spark.ModelAndView;
 import spark.Request;
 import spark.template.velocity.*;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 public class ViewUtil {
@@ -12,8 +13,8 @@ public class ViewUtil {
     // Renders a template given a model and a request
     // The request is needed to check the user session for language settings
     // and to see if the user is logged in
-    public static String render(Request request, Map<String, Object> model, String templatePath) {
-        return strictVelocityEngine().render(new ModelAndView(model, templatePath));
+    public static String render(Request request, Map<String, Object> model, Path template) {
+        return strictVelocityEngine().render(new ModelAndView(model, template.toString()));
     }
 
 
