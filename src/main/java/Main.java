@@ -1,4 +1,4 @@
-import crmj.CRMjServer;
+import com.jannetta.crmj.CRMjServer;
 
 public class Main {
     public static void main(String[] args) {

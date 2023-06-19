@@ -40,3 +40,17 @@ I have been browsing to find a CRM that suits my needs. I found that I could eit
   - [ ] Contact types
   - [ ] Interaction types
   - [ ] Social media types
+
+#### Conventions
+
+- [Hungarian notation](https://en.wikipedia.org/wiki/Hungarian_notation#Examples)
+- Private member
+  - Default - m_camelCase
+  - Static - s_camelCase
+  - Constant - m_UPPER_CASE
+  - Static constant - s_UPPER_CASE
+- Public member
+  - Default - camelCase
+  - Constant - UPPER_CASE
+- Avoid public members where possible (prefer getters/setters)
+
