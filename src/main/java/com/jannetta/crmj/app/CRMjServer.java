@@ -1,4 +1,4 @@
-package com.jannetta.crmj;
+package com.jannetta.crmj.app;
 
 import com.jannetta.crmj.controller.ContactController;
 import org.slf4j.Logger;
@@ -14,15 +14,10 @@ import static spark.Spark.*;
 
 public class CRMjServer {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(CRMjServer.class);
-    private CRMjProperties m_properties;
+    private final CRMjProperties m_properties;
 
-    public CRMjServer() {
-        try {
-            m_properties = new CRMjProperties();
-        } catch (IOException e) {
-            s_LOGGER.error("Error loading properties: ".concat(e.getMessage()));
-            return;
-        }
+    public CRMjServer(CRMjProperties properties) {
+        m_properties = properties;
 
         configureServer();
         configureWebpages();
