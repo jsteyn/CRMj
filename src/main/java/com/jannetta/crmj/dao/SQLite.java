@@ -8,7 +8,7 @@ public class SQLite {
      * Connect to a sample database
      */
     public static Connection connect() {
-        String url = "jdbc:sqlite:sqlitedb";
+        String url = "jdbc:sqlite:/home/jannetta/Documents/contact";
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
@@ -46,6 +46,7 @@ public class SQLite {
     }
 
     public static String getUsername(String email) {
-        String sql =
+        //String sql =
+        return "";
     }
 }

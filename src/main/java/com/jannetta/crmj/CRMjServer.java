@@ -56,6 +56,9 @@ public class CRMjServer {
         });
 
         // Returns JSON
+        /**
+         * Example URL: http://localhost:3141/j_username/jannetta@henning.org
+         */
         get("/j_username/:email", (request, response) -> {
             return ContactController.getJSONUsername(request.params(":email"));
         });
