@@ -53,4 +53,6 @@ I have been browsing to find a CRM that suits my needs. I found that I could eit
   - Default - camelCase
   - Constant - UPPER_CASE
 - Avoid public members where possible (prefer getters/setters)
+- Prefer Path over File and File over String
+- Single instance classes (like CRMjServer/CRMjProperties) should always be final (to avoid accidental overwrites of references)
 

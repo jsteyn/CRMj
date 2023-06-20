@@ -1,20 +1,26 @@
 package com.jannetta.crmj.dao;
 
+import com.jannetta.crmj.CRMjServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.*;
 
 public class SQLite {
-
+    private static final Logger s_LOGGER = LoggerFactory.getLogger(SQLite.class);
+    static Connection conn = null;
     /**
      * Connect to a sample database
      */
     public static Connection connect() {
-        String url = "jdbc:sqlite:/home/jannetta/Documents/contact";
-        Connection conn = null;
+        String url = "jdbc:sqlite:data/contacts.db";
+
         try {
             conn = DriverManager.getConnection(url);
             if (conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
                 System.out.println("The driver name is " + meta.getDriverName());
+            } else {
                 System.out.println("A new database has been created.");
             }
         } catch (SQLException e) {
@@ -24,14 +30,14 @@ public class SQLite {
     }
 
     /**
-     * select all rows in the warehouses table
+     * select all rows in the contact table
      */
-    public void selectAll() {
-        String sql = "SELECT * FROM contacts";
+    public static void selectAll() {
+        String sql = "SELECT * FROM contact";
 
-        try (Connection conn = this.connect();
+        try {
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             ResultSet rs = stmt.executeQuery(sql);
 
             // loop through the result set
             while (rs.next()) {
@@ -45,8 +51,20 @@ public class SQLite {
         }
     }
 
+        // TODO: Either remove or update functionality
+    /**
+     * Retrieve uuid given an email address from the database
+     * @param email address
+     * @return UUID
+     */
     public static String getUsername(String email) {
-        //String sql =
+        String sql = "select uuid from contact where email=\"" + email +   "\"";
         return "";
+    }
+
+    // TODO: Remove
+    public static void main(String[] args) {
+        connect();
+        selectAll();
     }
 }
