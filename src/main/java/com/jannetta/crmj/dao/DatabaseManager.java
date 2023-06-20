@@ -7,9 +7,6 @@ import java.sql.*;
 
 public class DatabaseManager {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(DatabaseManager.class);
-    private static final String s_URL_BASE = "jdbc:sqlite//";
-
-    private static final String s_FORMAT_QUERY_DB_CREATE = "CREATE DATABASE IF NOT EXISTS %s";
 
     private Connection m_connection = null;
     private DatabaseMetaData m_metaData = null;
