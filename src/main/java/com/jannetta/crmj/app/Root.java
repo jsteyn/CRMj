@@ -1,6 +1,6 @@
 package com.jannetta.crmj.app;
 
-import com.jannetta.crmj.dao.DatabaseManager;
+import com.jannetta.crmj.database.DatabaseManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

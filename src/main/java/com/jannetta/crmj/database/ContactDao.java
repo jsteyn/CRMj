@@ -1,4 +1,4 @@
-package com.jannetta.crmj.dao;
+package com.jannetta.crmj.database;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

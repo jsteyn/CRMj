@@ -1,6 +1,6 @@
 package com.jannetta.crmj.controller;
 
-import com.jannetta.crmj.dao.ContactDao;
+import com.jannetta.crmj.database.ContactDao;
 import com.jannetta.crmj.datamodel.Contact;
 import com.jannetta.crmj.template.TemplateManager;
 import org.slf4j.Logger;
