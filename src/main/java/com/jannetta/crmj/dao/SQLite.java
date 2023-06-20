@@ -1,6 +1,5 @@
 package com.jannetta.crmj.dao;
 
-import com.jannetta.crmj.CRMjServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
