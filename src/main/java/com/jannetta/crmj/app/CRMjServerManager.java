@@ -7,16 +7,15 @@ import spark.ModelAndView;
 import spark.Spark;
 import spark.template.velocity.VelocityTemplateEngine;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import static spark.Spark.*;
 
-public class CRMjServer {
-    private static final Logger s_LOGGER = LoggerFactory.getLogger(CRMjServer.class);
-    private final CRMjProperties m_properties;
+public class CRMjServerManager {
+    private static final Logger s_LOGGER = LoggerFactory.getLogger(CRMjServerManager.class);
+    private final CRMjPropertiesManager m_properties;
 
-    public CRMjServer(CRMjProperties properties) {
+    public CRMjServerManager(CRMjPropertiesManager properties) {
         m_properties = properties;
 
         configureServer();

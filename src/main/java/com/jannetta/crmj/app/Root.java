@@ -7,13 +7,13 @@ import java.io.IOException;
 
 public class Root {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(Root.class);
-    private final CRMjProperties m_properties;
-    private final CRMjServer m_server;
+    private final CRMjPropertiesManager m_properties;
+    private final CRMjServerManager m_server;
 
     public Root() {
-        CRMjProperties properties;
+        CRMjPropertiesManager properties;
         try {
-            properties = new CRMjProperties();
+            properties = new CRMjPropertiesManager();
         } catch (IOException e) {
             m_properties = null;
             m_server = null;
@@ -22,14 +22,14 @@ public class Root {
         }
         m_properties = properties;
 
-        m_server = new CRMjServer(m_properties);
+        m_server = new CRMjServerManager(m_properties);
     }
 
-    public final CRMjProperties getProperties() {
+    public final CRMjPropertiesManager getProperties() {
         return m_properties;
     }
 
-    public final CRMjServer getServer() {
+    public final CRMjServerManager getServer() {
         return m_server;
     }
 }

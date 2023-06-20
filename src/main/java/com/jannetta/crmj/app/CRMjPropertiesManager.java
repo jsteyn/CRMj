@@ -9,15 +9,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-public class CRMjProperties {
-    private static final Logger s_LOGGER = LoggerFactory.getLogger(CRMjProperties.class);
+public class CRMjPropertiesManager {
+    private static final Logger s_LOGGER = LoggerFactory.getLogger(CRMjPropertiesManager.class);
     private static final Path s_CONFIG_DIRECTORY = Paths.get(System.getProperty("user.home"), ".CRMj");
     private static final Path s_PROPERTIES_FILEPATH = s_CONFIG_DIRECTORY.resolve("crmj.properties");
 
     private final String m_portPropID = "server.port";
     private int m_port = 3141;
 
-    public CRMjProperties() throws IOException {
+    public CRMjPropertiesManager() throws IOException {
         s_LOGGER.info("Loading properties: ".concat(s_PROPERTIES_FILEPATH.toString()));
         if (Files.exists(s_PROPERTIES_FILEPATH)) {
             loadPropertiesFromFile();

@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
-public class SQLite {
-    private static final Logger s_LOGGER = LoggerFactory.getLogger(SQLite.class);
+public class DatabaseManager {
+    private static final Logger s_LOGGER = LoggerFactory.getLogger(DatabaseManager.class);
     static Connection conn = null;
     /**
      * Connect to a sample database

@@ -8,7 +8,7 @@ import spark.template.velocity.*;
 import java.nio.file.Path;
 import java.util.Map;
 
-public class ViewUtil {
+public class TemplateManager {
 
     // Renders a template given a model and a request
     // The request is needed to check the user session for language settings
