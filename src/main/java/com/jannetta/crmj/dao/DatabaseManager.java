@@ -7,63 +7,32 @@ import java.sql.*;
 
 public class DatabaseManager {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(DatabaseManager.class);
-    static Connection conn = null;
-    /**
-     * Connect to a sample database
-     */
-    public static Connection connect() {
-        String url = "jdbc:sqlite:data/contacts.db";
+    private static final String s_URL_BASE = "jdbc:sqlite//";
 
+    private static final String s_FORMAT_QUERY_DB_CREATE = "CREATE DATABASE IF NOT EXISTS %s";
+
+    private Connection m_connection = null;
+    private DatabaseMetaData m_metaData = null;
+    private String m_url;
+
+    /**
+     * Construct new {@code DatabaseManager} from an existing database URL.
+     * @param databaseURL Database URL to connect to.
+     */
+    public DatabaseManager(String databaseURL) throws SQLException {
+        m_url = databaseURL;
+
+        m_connection = DriverManager.getConnection(m_url);
+        m_metaData = m_connection.getMetaData();
+        s_LOGGER.info("Database connection successfully created at [{}]", m_url);
+    }
+
+    public ResultSet query(String query) {
         try {
-            conn = DriverManager.getConnection(url);
-            if (conn != null) {
-                DatabaseMetaData meta = conn.getMetaData();
-                System.out.println("The driver name is " + meta.getDriverName());
-            } else {
-                System.out.println("A new database has been created.");
-            }
+            return m_connection.createStatement().executeQuery(query);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            s_LOGGER.info("Error executing query - {}:\n{}", e.getMessage(), query);
+            return null;
         }
-        return conn;
-    }
-
-    /**
-     * select all rows in the contact table
-     */
-    public static void selectAll() {
-        String sql = "SELECT * FROM contact";
-
-        try {
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql);
-
-            // loop through the result set
-            while (rs.next()) {
-                System.out.println(rs.getString("UUID") + "\t" +
-                        rs.getString("firstname") + "\t" +
-                        rs.getString("middlename") + "\t" +
-                        rs.getString("lastname"));
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-        // TODO: Either remove or update functionality
-    /**
-     * Retrieve uuid given an email address from the database
-     * @param email address
-     * @return UUID
-     */
-    public static String getUsername(String email) {
-        String sql = "select uuid from contact where email=\"" + email +   "\"";
-        return "";
-    }
-
-    // TODO: Remove
-    public static void main(String[] args) {
-        connect();
-        selectAll();
     }
 }

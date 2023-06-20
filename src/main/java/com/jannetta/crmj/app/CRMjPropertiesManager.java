@@ -17,6 +17,13 @@ public class CRMjPropertiesManager {
     private final String m_portPropID = "server.port";
     private int m_port = 3141;
 
+    private final String m_databaseUrlBasePropID = "database.url-base";
+    private String m_databaseUrlBase = "jdbc:sqlite:";
+    private final String m_databasePathPropID = "database.source-path";
+    private Path m_databasePath = s_CONFIG_DIRECTORY.resolve("data.db");
+
+    private boolean m_isDirty = false;
+
     public CRMjPropertiesManager() throws IOException {
         s_LOGGER.info("Loading properties: ".concat(s_PROPERTIES_FILEPATH.toString()));
         if (Files.exists(s_PROPERTIES_FILEPATH)) {
@@ -35,26 +42,66 @@ public class CRMjPropertiesManager {
         }
     }
 
+    public Path getConfigLocation() {
+        return s_PROPERTIES_FILEPATH;
+    }
+
+    public int getPort() {
+        return m_port;
+    }
+
+    public void setPort(int port) {
+        m_port = port;
+        m_isDirty = true;
+    }
+
+    public String getDatabaseUrlBase() {
+        return m_databaseUrlBase;
+    }
+
+    public void setDatabaseUrlBase(String databaseUrlBase) {
+        m_databaseUrlBase = databaseUrlBase;
+        m_isDirty = true;
+    }
+
+    public Path getDatabasePath() {
+        return m_databasePath;
+    }
+
+    public void setDatabasePath(Path databasePath) {
+        m_databasePath = databasePath;
+    }
+
+    public String getDatabaseUrl() {
+        return m_databaseUrlBase.concat(m_databasePath.toAbsolutePath().toString());
+    }
+
+    /**
+     * {@link CRMjPropertiesManager} is considered dirty if a property has been set to a new value since loading.
+     * <br>
+     * This object can only be marked clean again by saving or loading. Setting a property back to its original value
+     * will not reset the dirty state of this object.
+     * @return {@code true} if marked as dirty, otherwise false.
+     */
+    public boolean isDirty() {
+        return m_isDirty;
+    }
+
     private void loadPropertiesFromFile() throws IOException {
+        m_isDirty = false;
+
         Properties properties = new Properties();
 
         FileInputStream stream = new FileInputStream(s_PROPERTIES_FILEPATH.toFile());
         properties.load(stream);
         stream.close();
 
-        try {
-            m_port = readIntProperty(properties, m_portPropID);
-        } catch(MissingPropertyException e) {
-            s_LOGGER.error(String.format(
-                    "Error reading property [%s]. Property not found. Using default value of: %s",
-                    m_portPropID, m_port
-            ));
-        } catch (NumberFormatException e) {
-            s_LOGGER.error(String.format(
-                    "Error reading property [%s]. Value [%s] not a valid integer. Using default value of: %s",
-                    m_portPropID, properties.getProperty(m_portPropID), m_port
-            ));
-        }
+        // Server
+        m_port = readIntProperty(properties, m_portPropID, m_port);
+
+        // Database
+        m_databaseUrlBase = readStringProperty(properties, m_databaseUrlBasePropID, m_databaseUrlBase);
+        m_databasePath    = Paths.get(readStringProperty(properties, m_databasePathPropID, m_databasePath.toString()));
     }
 
     private void savePropertiesToFile() throws IOException {
@@ -65,41 +112,64 @@ public class CRMjPropertiesManager {
 
         Properties properties = new Properties();
 
+        // Server
         properties.setProperty(m_portPropID, Integer.toString(m_port));
+
+        // Database
+        properties.setProperty(m_databaseUrlBasePropID, m_databaseUrlBase);
+        properties.setProperty(m_databasePathPropID, m_databasePath.toString());
 
         FileOutputStream stream = new FileOutputStream(s_PROPERTIES_FILEPATH.toFile());
         properties.store(stream, "CRMj (Customer Relationship Management - Java/Jannetta) properties");
         stream.close();
+
+        m_isDirty = false;
     }
 
-    private int readIntProperty(Properties properties, String propertyID)
-            throws NumberFormatException, MissingPropertyException {
-        String rawValue = readStringProperty(properties, propertyID);
-        return Integer.parseInt(rawValue);
-    }
-    private float readFloatProperty(Properties properties, String propertyID)
-            throws NumberFormatException, MissingPropertyException {
-        String rawValue = readStringProperty(properties, propertyID);
-        return Float.parseFloat(rawValue);
-    }
-    private String readStringProperty(Properties properties, String propertyID) throws MissingPropertyException {
-        String value = properties.getProperty(propertyID);
-        if (value == null)
-            throw new MissingPropertyException(propertyID);
-        return value;
-    }
-
-    public Path getConfigLocation() {
-        return s_PROPERTIES_FILEPATH;
-    }
-
-    public int getPort() {
-        return m_port;
-    }
-
-    static class MissingPropertyException extends Exception {
-        public MissingPropertyException(String propertyID) {
-            super(String.format("Property ID [%s] not found in resource file", propertyID));
+    private int readIntProperty(Properties properties, String propertyID, int defaultValue) {
+        String rawValue = readStringProperty(properties, propertyID, null);
+        if (rawValue == null) {
+            m_isDirty = true;
+            return defaultValue;
         }
+        try {
+            return Integer.parseInt(rawValue);
+        } catch (NumberFormatException e) {
+            s_LOGGER.error(
+                "Error reading property [{}]. Value [{}] not a valid integer. Using default value of: {}",
+                m_portPropID, properties.getProperty(m_portPropID), m_port
+            );
+            m_isDirty = true;
+            return defaultValue;
+        }
+    }
+    private float readFloatProperty(Properties properties, String propertyID, float defaultValue) {
+        String rawValue = readStringProperty(properties, propertyID, null);
+        if (rawValue == null) {
+            m_isDirty = true;
+            return defaultValue;
+        }
+        try {
+            return Float.parseFloat(rawValue);
+        } catch (NumberFormatException e) {
+            s_LOGGER.error(
+                    "Error reading property [{}]. Value [{}] not a valid float. Using default value of: {}",
+                    m_portPropID, properties.getProperty(m_portPropID), m_port
+            );
+            m_isDirty = true;
+            return defaultValue;
+        }
+    }
+    private String readStringProperty(Properties properties, String propertyID, String defaultValue){
+        String value = properties.getProperty(propertyID);
+        if (value == null) {
+            s_LOGGER.error(String.format(
+                "Error reading property [%s]. Property not found. Using default value of: %s",
+                propertyID, defaultValue
+            ));
+            m_isDirty = true;
+            return defaultValue;
+        }
+        return value;
     }
 }
