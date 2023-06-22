@@ -1,10 +1,15 @@
 <html>
-<head>
-</head>
-<body>
-
-First Name: $firstname<br/>
-Middle Name: $middlename<br/>
-Last Name: $lastname<br/>
-</body>
+    <head>
+    </head>
+    <body>
+        <p>
+            Added contact: $contact.getFirstName() $contact.getLastName()
+        </p>
+        <p>
+            <a href="/add_contact">Add another</a>
+        </p>
+        <p>
+            <a href="/all_contacts">List contacts</a>
+        </p>
+    </body>
 </html>

@@ -19,13 +19,17 @@ public class CRMjPropertiesManager {
 
     private final String m_databaseDriverPropID = "database.driver";
     private String m_databaseDriver = "org.sqlite.JDBC";
-    private final String m_databaseUrlPropID = "database.url";
-    private Path m_databaseUrl = s_CONFIG_DIRECTORY.resolve("data.db");
+    private final String m_databaseJdbcPathPropID = "database.jdbc.url";
+    private Path m_databaseJdbcPath = s_CONFIG_DIRECTORY.resolve("data.db");
+    private final String m_databaseJdbcProtocolPropID = "database.jdbc.protocol";
+    private String m_databaseJdbcProtocol = "jdbc";
+    private final String m_databaseJdbcSubProtocolPropID = "database.jdbc.sub-protocol";
+    private String m_databaseJdbcSubProtocol = "sqlite";
 
     private boolean m_isDirty = false;
 
     public CRMjPropertiesManager() throws IOException {
-        s_LOGGER.info("Loading properties: ".concat(s_PROPERTIES_FILEPATH.toString()));
+        s_LOGGER.info("Loading properties from: [{}]", s_PROPERTIES_FILEPATH.toString());
         if (Files.exists(s_PROPERTIES_FILEPATH)) {
             loadPropertiesFromFile();
         } else {
@@ -64,12 +68,32 @@ public class CRMjPropertiesManager {
         m_isDirty = true;
     }
 
-    public Path getDatabaseUrl() {
-        return m_databaseUrl;
+    public Path getDatabaseJdbcPath() {
+        return m_databaseJdbcPath;
     }
 
-    public void setDatabaseUrl(Path databaseUrl) {
-        m_databaseUrl = databaseUrl;
+    public void setDatabaseJdbcPath(Path path) {
+        m_databaseJdbcPath = path;
+    }
+
+    public String getDatabaseJdbcProtocol() {
+        return m_databaseJdbcProtocol;
+    }
+
+    public void setDatabaseJdbcProtocol(String protocol) {
+        m_databaseJdbcProtocol = protocol;
+    }
+
+    public String getDatabaseJdbcSubProtocol() {
+        return m_databaseJdbcSubProtocol;
+    }
+
+    public void setDatabaseJdbcSubProtocol(String subProtocol) {
+        m_databaseJdbcSubProtocol = subProtocol;
+    }
+
+    public String getFullDatabaseJdbcUrl() {
+        return String.format("%s:%s:%s", m_databaseJdbcProtocol, m_databaseJdbcSubProtocol, m_databaseJdbcPath.toString());
     }
 
     /**
@@ -97,7 +121,9 @@ public class CRMjPropertiesManager {
 
         // Database
         m_databaseDriver = readStringProperty(properties, m_databaseDriverPropID, m_databaseDriver);
-        m_databaseUrl    = Paths.get(readStringProperty(properties, m_databaseUrlPropID, m_databaseUrl.toString()));
+        m_databaseJdbcPath = Paths.get(readStringProperty(properties, m_databaseJdbcPathPropID, m_databaseJdbcPath.toString()));
+        m_databaseJdbcProtocol = readStringProperty(properties, m_databaseJdbcProtocolPropID, m_databaseJdbcProtocol);
+        m_databaseJdbcSubProtocol = readStringProperty(properties, m_databaseJdbcSubProtocolPropID, m_databaseJdbcSubProtocol);
     }
 
     private void savePropertiesToFile() throws IOException {
@@ -113,7 +139,9 @@ public class CRMjPropertiesManager {
 
         // Database
         properties.setProperty(m_databaseDriverPropID, m_databaseDriver);
-        properties.setProperty(m_databaseUrlPropID, m_databaseUrl.toString());
+        properties.setProperty(m_databaseJdbcPathPropID, m_databaseJdbcPath.toString());
+        properties.setProperty(m_databaseJdbcProtocolPropID, m_databaseJdbcProtocol);
+        properties.setProperty(m_databaseJdbcSubProtocolPropID, m_databaseJdbcSubProtocol);
 
         FileOutputStream stream = new FileOutputStream(s_PROPERTIES_FILEPATH.toFile());
         properties.store(stream, "CRMj (Customer Relationship Management - Java/Jannetta) properties");

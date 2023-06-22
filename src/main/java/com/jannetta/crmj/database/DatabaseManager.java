@@ -19,10 +19,11 @@ public abstract class DatabaseManager implements AutoCloseable {
     private final SqlSessionFactory m_sessionFactory;
     private SqlSession m_session = null;
 
-    public DatabaseManager(String driver, Path database) {
+    public DatabaseManager(String driver, String url) {
+        s_LOGGER.info("Loading database with driver: [{}] at url: [{}]", driver, url);
         PooledDataSource dataSource = new PooledDataSource();
-        dataSource.setDriver("org.sqlite.JDBC");
-        dataSource.setUrl(database.toString());
+        dataSource.setDriver(driver);
+        dataSource.setUrl(url);
 
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
         Environment environment = new Environment("development", transactionFactory, dataSource);
@@ -45,6 +46,7 @@ public abstract class DatabaseManager implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
+        m_session.commit();
         m_session.close();
         m_session = null;
     }

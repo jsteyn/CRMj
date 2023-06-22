@@ -1,0 +1,19 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>Contacts</h1>
+        #foreach( $contact in $allContacts )
+            <h2>Contact: $!contact.getFirstName() $!contact.getLastName()</h2>
+            <p>
+                First Name: $!contact.getFirstName()
+            </p>
+            <p>
+                Middle Name(s): $!contact.getMiddleNames()
+            </p>
+            <p>
+                Last Name: $!contact.getLastName()
+            </p>
+        #end
+    </body>
+</html>
