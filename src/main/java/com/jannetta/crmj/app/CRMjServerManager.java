@@ -1,6 +1,5 @@
 package com.jannetta.crmj.app;
 
-import com.jannetta.crmj.controller.ContactController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
@@ -41,18 +40,5 @@ public class CRMjServerManager {
             (request, response) -> new ModelAndView(new HashMap<String, Object>(), "website/index.vm"),
             engine
         );
-        get("/contact", ContactController.getContact);
-        post("/add_contact", ContactController::addContact);
-
-        // Returns plain text
-        get("/username/:email", (request, response) -> {
-            return ContactController.getUsername(request.params(":email"));
-        });
-
-        // Example URL: http://localhost:3141/j_username/jannetta@henning.org
-        get("/j_username/:email", (request, response) -> {
-            return ContactController.getJSONUsername(request.params(":email"));
-        });
-
     }
 }

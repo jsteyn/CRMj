@@ -17,10 +17,10 @@ public class CRMjPropertiesManager {
     private final String m_portPropID = "server.port";
     private int m_port = 3141;
 
-    private final String m_databaseUrlBasePropID = "database.url-base";
-    private String m_databaseUrlBase = "jdbc:sqlite:";
-    private final String m_databasePathPropID = "database.source-path";
-    private Path m_databasePath = s_CONFIG_DIRECTORY.resolve("data.db");
+    private final String m_databaseDriverPropID = "database.driver";
+    private String m_databaseDriver = "org.sqlite.JDBC";
+    private final String m_databaseUrlPropID = "database.url";
+    private Path m_databaseUrl = s_CONFIG_DIRECTORY.resolve("data.db");
 
     private boolean m_isDirty = false;
 
@@ -55,25 +55,21 @@ public class CRMjPropertiesManager {
         m_isDirty = true;
     }
 
-    public String getDatabaseUrlBase() {
-        return m_databaseUrlBase;
+    public String getDatabaseDriver() {
+        return m_databaseDriver;
     }
 
-    public void setDatabaseUrlBase(String databaseUrlBase) {
-        m_databaseUrlBase = databaseUrlBase;
+    public void setDatabaseDriver(String databaseDriver) {
+        m_databaseDriver = databaseDriver;
         m_isDirty = true;
     }
 
-    public Path getDatabasePath() {
-        return m_databasePath;
+    public Path getDatabaseUrl() {
+        return m_databaseUrl;
     }
 
-    public void setDatabasePath(Path databasePath) {
-        m_databasePath = databasePath;
-    }
-
-    public String getDatabaseUrl() {
-        return m_databaseUrlBase.concat(m_databasePath.toAbsolutePath().toString());
+    public void setDatabaseUrl(Path databaseUrl) {
+        m_databaseUrl = databaseUrl;
     }
 
     /**
@@ -100,8 +96,8 @@ public class CRMjPropertiesManager {
         m_port = readIntProperty(properties, m_portPropID, m_port);
 
         // Database
-        m_databaseUrlBase = readStringProperty(properties, m_databaseUrlBasePropID, m_databaseUrlBase);
-        m_databasePath    = Paths.get(readStringProperty(properties, m_databasePathPropID, m_databasePath.toString()));
+        m_databaseDriver = readStringProperty(properties, m_databaseDriverPropID, m_databaseDriver);
+        m_databaseUrl    = Paths.get(readStringProperty(properties, m_databaseUrlPropID, m_databaseUrl.toString()));
     }
 
     private void savePropertiesToFile() throws IOException {
@@ -116,8 +112,8 @@ public class CRMjPropertiesManager {
         properties.setProperty(m_portPropID, Integer.toString(m_port));
 
         // Database
-        properties.setProperty(m_databaseUrlBasePropID, m_databaseUrlBase);
-        properties.setProperty(m_databasePathPropID, m_databasePath.toString());
+        properties.setProperty(m_databaseDriverPropID, m_databaseDriver);
+        properties.setProperty(m_databaseUrlPropID, m_databaseUrl.toString());
 
         FileOutputStream stream = new FileOutputStream(s_PROPERTIES_FILEPATH.toFile());
         properties.store(stream, "CRMj (Customer Relationship Management - Java/Jannetta) properties");

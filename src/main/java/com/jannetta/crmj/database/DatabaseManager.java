@@ -1,35 +1,54 @@
 package com.jannetta.crmj.database;
 
+import org.apache.ibatis.datasource.pooled.PooledDataSource;
+import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.transaction.TransactionFactory;
+import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.nio.file.Path;
 
-public class DatabaseManager {
+public abstract class DatabaseManager implements AutoCloseable {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(DatabaseManager.class);
 
-    private Connection m_connection = null;
-    private DatabaseMetaData m_metaData = null;
-    private String m_url;
+    private final SqlSessionFactory m_sessionFactory;
+    private SqlSession m_session = null;
+
+    public DatabaseManager(String driver, Path database) {
+        PooledDataSource dataSource = new PooledDataSource();
+        dataSource.setDriver("org.sqlite.JDBC");
+        dataSource.setUrl(database.toString());
+
+        TransactionFactory transactionFactory = new JdbcTransactionFactory();
+        Environment environment = new Environment("development", transactionFactory, dataSource);
+
+        Configuration configuration = new Configuration(environment);
+        configuration.addMapper(ContactMapper.class);
+
+        m_sessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+    }
 
     /**
-     * Construct new {@code DatabaseManager} from an existing database URL.
-     * @param databaseURL Database URL to connect to.
+     * Open this resource, making all underlying resources available for use.
+     * <br>
+     * Should be used in conjunction with {@link #close()}, or managed by a try-with-resources statement.
      */
-    public DatabaseManager(String databaseURL) throws SQLException {
-        m_url = databaseURL;
-
-        m_connection = DriverManager.getConnection(m_url);
-        m_metaData = m_connection.getMetaData();
-        s_LOGGER.info("Database connection successfully created at [{}]", m_url);
+    public void open() {
+        m_session = m_sessionFactory.openSession();
+        onOpen(m_session);
     }
 
-    public ResultSet query(String query) {
-        try {
-            return m_connection.createStatement().executeQuery(query);
-        } catch (SQLException e) {
-            s_LOGGER.info("Error executing query - {}:\n{}", e.getMessage(), query);
-            return null;
-        }
+    @Override
+    public void close() throws Exception {
+        m_session.close();
+        m_session = null;
     }
+
+    protected abstract void onOpen(SqlSession session);
+    protected abstract void onClose();
 }

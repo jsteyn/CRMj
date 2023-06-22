@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class Root {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(Root.class);
     private final CRMjPropertiesManager m_propertiesManager;
-    private final DatabaseManager m_databaseManager;
+    private final CRMjDatabaseManager m_databaseManager;
     private final CRMjServerManager m_serverManager;
 
     public Root() {
@@ -19,24 +19,11 @@ public class Root {
             propertiesManager = new CRMjPropertiesManager();
         } catch (IOException e) {
             s_LOGGER.error("Error loading properties: {}", e.getMessage());
-            m_propertiesManager = null;
-            m_databaseManager = null;
-            m_serverManager = null;
-            return;
+            throw new RuntimeException("Failed to initialize.");
         }
         m_propertiesManager = propertiesManager;
 
-        DatabaseManager databaseManager;
-        try {
-            databaseManager = new DatabaseManager(m_propertiesManager.getDatabaseUrl());
-        } catch (SQLException e) {
-            s_LOGGER.error("Error connecting to database: {}", e.getMessage());
-            m_databaseManager = null;
-            m_serverManager = null;
-            return;
-        }
-        m_databaseManager = databaseManager;
-
+        m_databaseManager = new CRMjDatabaseManager(m_propertiesManager.getDatabaseDriver(), m_propertiesManager.getDatabaseUrl());
         m_serverManager = new CRMjServerManager(m_propertiesManager);
 
         if (m_propertiesManager.isDirty())
@@ -51,7 +38,7 @@ public class Root {
         return m_serverManager;
     }
 
-    public final DatabaseManager getDatabaseManager() {
+    public final CRMjDatabaseManager getDatabaseManager() {
         return m_databaseManager;
     }
 }
