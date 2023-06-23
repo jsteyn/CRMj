@@ -8,11 +8,18 @@ I have been browsing to find a CRM that suits my needs. I found that I could eit
 - [ ] To be written in **Java**
 - [ ] We'll be using **IntelliJ** so the directory structure will reflect that.
 - [ ] We'll be using **Maven**
-- [ ] To run, like [OpenRefine](https://openrefine.org/) as a web service but on you local machine so that you do not require Internet activity and you do not have to consider all the security implications of running on public servers.
 - [ ] To use **SparkJava** with **Jetty**
   - [ ] [https://sparkjava.com/tutorials/jetty-request-log](https://sparkjava.com/tutorials/jetty-request-log)
   - [ ] [https://sparkjava.com/tutorials/application-structure](https://sparkjava.com/tutorials/application-structure)
 - [ ] To use **SQLite** for a database
+- [ ] A REST service
+- [ ] A Browser user interface
+- [ ] To run, like [OpenRefine](https://openrefine.org/) as a web service but on your local machine so that you do not require Internet activity and you do not have to consider all the security implications of running on public servers.
+   
+### Considerations for later
+1. To add an alternative Swing (or something) desktop user interface
+2. To add security via login for multi-user
+3. To make provision for other databases. The design will use DAO to provide for this from the beginning.
 
 ### Functional Requirements
 #### Contacts
