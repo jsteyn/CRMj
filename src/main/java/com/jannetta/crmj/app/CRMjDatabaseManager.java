@@ -1,40 +1,35 @@
 package com.jannetta.crmj.app;
 
-import com.jannetta.crmj.database.Contact;
-import com.jannetta.crmj.database.ContactMapper;
+import com.jannetta.crmj.database.model.Contact;
 import com.jannetta.crmj.database.DatabaseManager;
-import org.apache.ibatis.session.SqlSession;
+import org.hibernate.Session;
 
-import java.nio.file.Path;
 import java.util.List;
 
 public class CRMjDatabaseManager extends DatabaseManager {
-    private ContactMapper m_contactMapper = null;
-
     public CRMjDatabaseManager(String driver, String url) {
         super(driver, url);
     }
 
     public void insert(Contact contact) {
-        m_contactMapper.insertContact(contact);
+        getSession().persist(contact);
     }
 
     public List<Contact> getAllContacts() {
-        return m_contactMapper.getAllContacts();
+        return getSession().createQuery("from Contact", Contact.class).list();
     }
 
     public Contact getContact(int id) {
-        return m_contactMapper.getContact(id);
+        return getSession().get(Contact.class, id);
     }
 
     @Override
-    protected void onOpen(SqlSession session) {
-        m_contactMapper = session.getMapper(ContactMapper.class);
-        m_contactMapper.createTable();
+    protected void onOpen(Session session) {
+
     }
 
     @Override
     protected void onClose() {
-        m_contactMapper = null;
+
     }
 }

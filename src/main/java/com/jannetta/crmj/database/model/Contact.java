@@ -1,14 +1,23 @@
-package com.jannetta.crmj.database;
+package com.jannetta.crmj.database.model;
 
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.*;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "contacts")
 public class Contact {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int m_id;
     @SerializedName("firstName")
+    @Column(name = "firstName")
     private String m_firstName;
     @SerializedName("middleNames")
+    @Column(name = "middleNames")
     private String m_middleNames;
     @SerializedName("lastName")
+    @Column(name = "lastName")
     private String m_lastName;
 
     public String getFirstName() {

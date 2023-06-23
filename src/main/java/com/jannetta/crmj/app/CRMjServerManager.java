@@ -1,6 +1,6 @@
 package com.jannetta.crmj.app;
 
-import com.jannetta.crmj.database.Contact;
+import com.jannetta.crmj.database.model.Contact;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
