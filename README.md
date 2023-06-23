@@ -5,16 +5,16 @@ I have been browsing to find a CRM that suits my needs. I found that I could eit
 
 ## Requirements
 ### Non functional requirements
-1. [ ] To be written in **Java**
-1. [ ] We'll be using **IntelliJ** so the directory structure will reflect that.
-1. [ ] We'll be using **Maven**
-1. [ ] To use **SparkJava** with **Jetty**
+- [ ] To be written in **Java**
+- [ ] We'll be using **IntelliJ** so the directory structure will reflect that.
+- [ ] We'll be using **Maven**
+- [ ] To use **SparkJava** with **Jetty**
   - [ ] [https://sparkjava.com/tutorials/jetty-request-log](https://sparkjava.com/tutorials/jetty-request-log)
   - [ ] [https://sparkjava.com/tutorials/application-structure](https://sparkjava.com/tutorials/application-structure)
-1. [ ] To use **SQLite** for a database
-1. [ ] A REST service
-1. [ ] A Browser user interface
-1. [ ] To run, like [OpenRefine](https://openrefine.org/) as a web service but on your local machine so that you do not require Internet activity and you do not have to consider all the security implications of running on public servers.
+- [ ] To use **SQLite** for a database
+- [ ] A REST service
+- [ ] A Browser user interface
+- [ ] To run, like [OpenRefine](https://openrefine.org/) as a web service but on your local machine so that you do not require Internet activity and you do not have to consider all the security implications of running on public servers.
    
 ### Considerations for later
 1. To add an alternative Swing (or something) desktop user interface
