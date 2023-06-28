@@ -1,5 +1,7 @@
 package com.jannetta.crmj.app;
 
+import com.jannetta.crmj.database.DatabaseProperties;
+import com.jannetta.crmj.server.ServerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-public class CRMjPropertiesManager {
+public class CRMjPropertiesManager implements DatabaseProperties, ServerProperties {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(CRMjPropertiesManager.class);
     private static final Path s_CONFIG_DIRECTORY = Paths.get(System.getProperty("user.home"), ".CRMj");
     private static final Path s_PROPERTIES_FILEPATH = s_CONFIG_DIRECTORY.resolve("crmj.properties");
@@ -84,15 +86,15 @@ public class CRMjPropertiesManager {
         m_databaseProtocol = protocol;
     }
 
-    public void setDatabaseDialect(String protocol) {
-        m_databaseDialect = protocol;
-    }
-
     public String getDatabaseDialect() {
         return m_databaseDialect;
     }
 
-    public String getFullDatabaseJdbcUrl() {
+    public void setDatabaseDialect(String protocol) {
+        m_databaseDialect = protocol;
+    }
+
+    public String getFullDatabaseUrl() {
         return String.format("%s%s", m_databaseProtocol, m_databasePath.toString());
     }
 

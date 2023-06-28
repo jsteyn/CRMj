@@ -1,6 +1,7 @@
 package com.jannetta.crmj.app;
 
 import com.jannetta.crmj.database.model.Contact;
+import com.jannetta.crmj.server.ServerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
@@ -14,10 +15,10 @@ import static spark.Spark.*;
 
 public class CRMjServerManager {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(CRMjServerManager.class);
-    private final CRMjPropertiesManager m_properties;
+    private final ServerProperties m_properties;
     private final CRMjDatabaseManager m_database;
 
-    public CRMjServerManager(CRMjPropertiesManager properties, CRMjDatabaseManager database) {
+    public CRMjServerManager(ServerProperties properties, CRMjDatabaseManager database) {
         m_properties = properties;
         m_database = database;
 

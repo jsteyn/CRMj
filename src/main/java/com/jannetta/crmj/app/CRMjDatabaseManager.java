@@ -1,5 +1,6 @@
 package com.jannetta.crmj.app;
 
+import com.jannetta.crmj.database.DatabaseProperties;
 import com.jannetta.crmj.database.model.Contact;
 import com.jannetta.crmj.database.DatabaseManager;
 import org.hibernate.Session;
@@ -7,8 +8,8 @@ import org.hibernate.Session;
 import java.util.List;
 
 public class CRMjDatabaseManager extends DatabaseManager {
-    public CRMjDatabaseManager(String driver, String url, String dialect) {
-        super(driver, url, dialect);
+    public CRMjDatabaseManager(DatabaseProperties properties) {
+        super(properties);
     }
 
     public void insert(Contact contact) {

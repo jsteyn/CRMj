@@ -16,16 +16,19 @@ import java.util.HashMap;
 public abstract class DatabaseManager implements AutoCloseable {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(DatabaseManager.class);
 
+    private final DatabaseProperties m_properties;
     private final SessionFactory m_sessionFactory;
     private Session m_session = null;
 
-    public DatabaseManager(String driver, String url, String dialect) {
-        s_LOGGER.info("Loading database with driver: [{}] at url: [{}]", driver, url);
+    public DatabaseManager(DatabaseProperties properties) {
+        m_properties = properties;
+
+        s_LOGGER.info("Loading database at: [{}]", m_properties.getFullDatabaseUrl());
 
         HashMap<String, String> settings = new HashMap<>();
-        settings.put("hibernate.connection.driver_class", driver);
-        settings.put("hibernate.connection.url", url);
-        settings.put("hibernate.dialect", dialect);
+        settings.put("hibernate.connection.driver_class", m_properties.getDatabaseDriver());
+        settings.put("hibernate.connection.url", m_properties.getFullDatabaseUrl());
+        settings.put("hibernate.dialect", m_properties.getDatabaseDialect());
         settings.put("hibernate.hbm2ddl.auto", "update");
         settings.put("hibernate.show_sql", "true");
 
