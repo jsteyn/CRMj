@@ -23,7 +23,7 @@ public class Root {
         }
         m_propertiesManager = propertiesManager;
 
-        m_databaseManager = new CRMjDatabaseManager(m_propertiesManager.getDatabaseDriver(), m_propertiesManager.getFullDatabaseJdbcUrl());
+        m_databaseManager = new CRMjDatabaseManager(m_propertiesManager.getDatabaseDriver(), m_propertiesManager.getFullDatabaseJdbcUrl(), m_propertiesManager.getDatabaseDialect());
         m_serverManager = new CRMjServerManager(m_propertiesManager, m_databaseManager);
 
         if (m_propertiesManager.isDirty())

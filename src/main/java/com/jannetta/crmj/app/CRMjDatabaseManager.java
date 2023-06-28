@@ -7,8 +7,8 @@ import org.hibernate.Session;
 import java.util.List;
 
 public class CRMjDatabaseManager extends DatabaseManager {
-    public CRMjDatabaseManager(String driver, String url) {
-        super(driver, url);
+    public CRMjDatabaseManager(String driver, String url, String dialect) {
+        super(driver, url, dialect);
     }
 
     public void insert(Contact contact) {

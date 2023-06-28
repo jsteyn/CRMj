@@ -19,12 +19,12 @@ public class CRMjPropertiesManager {
 
     private final String m_databaseDriverPropID = "database.driver";
     private String m_databaseDriver = "org.sqlite.JDBC";
-    private final String m_databaseJdbcPathPropID = "database.jdbc.url";
-    private Path m_databaseJdbcPath = s_CONFIG_DIRECTORY.resolve("data.db");
-    private final String m_databaseJdbcProtocolPropID = "database.jdbc.protocol";
-    private String m_databaseJdbcProtocol = "jdbc";
-    private final String m_databaseJdbcSubProtocolPropID = "database.jdbc.sub-protocol";
-    private String m_databaseJdbcSubProtocol = "sqlite";
+    private final String m_databasePathPropID = "database.jdbc.url";
+    private Path m_databasePath = s_CONFIG_DIRECTORY.resolve("data.db");
+    private final String m_databaseProtocolPropID = "database.jdbc.protocol";
+    private String m_databaseProtocol = "jdbc:sqlite:";
+    private final String m_databaseDialectPropID = "database.jdbc.dialect";
+    private String m_databaseDialect = "org.sqlite.hibernate.dialect.SQLiteDialect";
 
     private boolean m_isDirty = false;
 
@@ -68,32 +68,32 @@ public class CRMjPropertiesManager {
         m_isDirty = true;
     }
 
-    public Path getDatabaseJdbcPath() {
-        return m_databaseJdbcPath;
+    public Path getDatabasePath() {
+        return m_databasePath;
     }
 
-    public void setDatabaseJdbcPath(Path path) {
-        m_databaseJdbcPath = path;
+    public void setDatabasePath(Path path) {
+        m_databasePath = path;
     }
 
-    public String getDatabaseJdbcProtocol() {
-        return m_databaseJdbcProtocol;
+    public String getDatabaseProtocol() {
+        return m_databaseProtocol;
     }
 
-    public void setDatabaseJdbcProtocol(String protocol) {
-        m_databaseJdbcProtocol = protocol;
+    public void setDatabaseProtocol(String protocol) {
+        m_databaseProtocol = protocol;
     }
 
-    public String getDatabaseJdbcSubProtocol() {
-        return m_databaseJdbcSubProtocol;
+    public void setDatabaseDialect(String protocol) {
+        m_databaseDialect = protocol;
     }
 
-    public void setDatabaseJdbcSubProtocol(String subProtocol) {
-        m_databaseJdbcSubProtocol = subProtocol;
+    public String getDatabaseDialect() {
+        return m_databaseDialect;
     }
 
     public String getFullDatabaseJdbcUrl() {
-        return String.format("%s:%s:%s", m_databaseJdbcProtocol, m_databaseJdbcSubProtocol, m_databaseJdbcPath.toString());
+        return String.format("%s%s", m_databaseProtocol, m_databasePath.toString());
     }
 
     /**
@@ -121,9 +121,9 @@ public class CRMjPropertiesManager {
 
         // Database
         m_databaseDriver = readStringProperty(properties, m_databaseDriverPropID, m_databaseDriver);
-        m_databaseJdbcPath = Paths.get(readStringProperty(properties, m_databaseJdbcPathPropID, m_databaseJdbcPath.toString()));
-        m_databaseJdbcProtocol = readStringProperty(properties, m_databaseJdbcProtocolPropID, m_databaseJdbcProtocol);
-        m_databaseJdbcSubProtocol = readStringProperty(properties, m_databaseJdbcSubProtocolPropID, m_databaseJdbcSubProtocol);
+        m_databasePath = Paths.get(readStringProperty(properties, m_databasePathPropID, m_databasePath.toString()));
+        m_databaseProtocol = readStringProperty(properties, m_databaseProtocolPropID, m_databaseProtocol);
+        m_databaseDialect = readStringProperty(properties, m_databaseDialectPropID, m_databaseDialect);
     }
 
     private void savePropertiesToFile() throws IOException {
@@ -139,9 +139,9 @@ public class CRMjPropertiesManager {
 
         // Database
         properties.setProperty(m_databaseDriverPropID, m_databaseDriver);
-        properties.setProperty(m_databaseJdbcPathPropID, m_databaseJdbcPath.toString());
-        properties.setProperty(m_databaseJdbcProtocolPropID, m_databaseJdbcProtocol);
-        properties.setProperty(m_databaseJdbcSubProtocolPropID, m_databaseJdbcSubProtocol);
+        properties.setProperty(m_databasePathPropID, m_databasePath.toString());
+        properties.setProperty(m_databaseProtocolPropID, m_databaseProtocol);
+        properties.setProperty(m_databaseDialectPropID, m_databaseDialect);
 
         FileOutputStream stream = new FileOutputStream(s_PROPERTIES_FILEPATH.toFile());
         properties.store(stream, "CRMj (Customer Relationship Management - Java/Jannetta) properties");

@@ -11,25 +11,27 @@ import org.slf4j.LoggerFactory;
 
 import org.hibernate.*;
 
+import java.util.HashMap;
+
 public abstract class DatabaseManager implements AutoCloseable {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(DatabaseManager.class);
 
     private final SessionFactory m_sessionFactory;
     private Session m_session = null;
 
-    public DatabaseManager(String driver, String url) {
+    public DatabaseManager(String driver, String url, String dialect) {
         s_LOGGER.info("Loading database with driver: [{}] at url: [{}]", driver, url);
 
-        Configuration configuration = new Configuration()
-            .addAnnotatedClass(Contact.class)
-            .setProperty("hibernate.connection.driver_class", driver)
-            .setProperty("hibernate.connection.url", url)
-            .setProperty("hibernate.dialect", "org.sqlite.hibernate.dialect.SQLiteDialect");
+        HashMap<String, String> settings = new HashMap<>();
+        settings.put("hibernate.connection.driver_class", driver);
+        settings.put("hibernate.connection.url", url);
+        settings.put("hibernate.dialect", dialect);
+        settings.put("hibernate.hbm2ddl.auto", "update");
+        settings.put("hibernate.show_sql", "true");
 
-        StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-            .applySettings(configuration.getProperties()).build();
-
-        MetadataSources sources = new MetadataSources(registry);
+        StandardServiceRegistry registry = new StandardServiceRegistryBuilder().applySettings(settings).build();
+        MetadataSources sources = new MetadataSources(registry)
+            .addAnnotatedClass(Contact.class);
         Metadata metadata = sources.getMetadataBuilder().build();
 
         m_sessionFactory = metadata.getSessionFactoryBuilder().build();

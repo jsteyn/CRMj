@@ -2,7 +2,7 @@ package com.jannetta.crmj.database.model;
 
 import com.google.gson.annotations.*;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "contacts")
