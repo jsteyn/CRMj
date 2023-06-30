@@ -7,8 +7,10 @@ import javax.persistence.*;
 @Entity
 @Table(name = "contacts")
 public class Contact {
+    @SerializedName("id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int m_id;
     @SerializedName("firstName")
     @Column(name = "firstName")
