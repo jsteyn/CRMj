@@ -1,0 +1,5 @@
+#set($title = "CRMj")
+#macro(content)
+    asdf
+#end
+#parse("/static/templates/layouts/default.vm")

@@ -7,6 +7,6 @@
     </head>
     <body>
         <h1>CRMj</h1>
-        #parse($contents)
+        #content()
     </body>
 </html>
