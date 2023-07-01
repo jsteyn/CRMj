@@ -1,15 +1,10 @@
 package com.jannetta.crmj.app;
 
-import com.jannetta.crmj.database.model.Contact;
 import com.jannetta.crmj.server.ServerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.ModelAndView;
 import spark.Spark;
-import spark.TemplateViewRoute;
 import spark.template.velocity.VelocityTemplateEngine;
-
-import java.util.HashMap;
 
 public class CRMjServerManager {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(CRMjServerManager.class);
@@ -39,6 +34,6 @@ public class CRMjServerManager {
         s_LOGGER.info("Server opening at: ".concat(url));
 
         Spark.port(port);
-        Spark.staticFiles.location("/velocity");
+        Spark.staticFiles.location("static");
     }
 }

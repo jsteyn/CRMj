@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>$title</title>
+        <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     </head>
     <body>
         <h1>CRMj</h1>
