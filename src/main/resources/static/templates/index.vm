@@ -1,5 +1,18 @@
 #set($title = "CRMj")
 #macro(content)
-    asdf
+    <div class="tab">
+        <button data-target="content-contacts">Contacts</button>
+        <button data-target="content-dummy">Dummy</button>
+    </div>
+
+    <div class="tab-content-container">
+        <div id="content-contacts" class="tab-content">
+            <h3>Contacts</h3>
+        </div>
+        <div id="content-dummy" class="tab-content">
+            <h3>Dummy</h3>
+            Undomesticated equines could not tear me away from here.
+        </div>
+    </div>
 #end
 #parse("/static/templates/layouts/default.vm")
