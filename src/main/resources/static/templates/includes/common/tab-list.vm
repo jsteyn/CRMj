@@ -1,0 +1,14 @@
+#macro(tablist $tabs)
+    <div class="tab">
+        #foreach($tab in $tabs)
+            <button data-target="$tab.id">$tab.name</button>
+        #end
+    </div>
+    <div class="tab-content-container">
+        #foreach($tab in $tabs)
+            <div id="$tab.id" class="tab-content">
+                $tab.content
+            </div>
+        #end
+    </div>
+#end

@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+
+#parse("/static/templates/includes/common/tab-list.vm")
+
 <html lang="en">
     <head>
         <meta charset="UTF-8">
