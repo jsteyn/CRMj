@@ -1,0 +1,4 @@
+#macro(dummy_content)
+    <h3>Dummy</h3>
+    Undomesticated equines could not tear me away from here.
+#end
