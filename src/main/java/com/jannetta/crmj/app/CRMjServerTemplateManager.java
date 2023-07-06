@@ -7,11 +7,15 @@ import spark.template.velocity.VelocityTemplateEngine;
 
 import java.util.HashMap;
 
-public class CRMjTemplates {
+public class CRMjServerTemplateManager {
     private static final TemplateViewRoute index = (request, response) -> basicTemplate("static/templates/index.vm");
 
-    public static void mapRoutes(VelocityTemplateEngine engine) {
-        Spark.get("/", CRMjTemplates.index, engine);
+    public CRMjServerTemplateManager() {
+
+    }
+
+    public void mapRoutes(VelocityTemplateEngine engine) {
+        Spark.get("/", index, engine);
     }
 
     private static ModelAndView basicTemplate(String templatePath) {

@@ -10,18 +10,25 @@ public class CRMjServerManager {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(CRMjServerManager.class);
 
     private final ServerProperties m_properties;
-    private final CRMjDatabaseManager m_database;
+    private final CRMjDatabaseManager m_databaseManager;
+
+    private final CRMjServerTemplateManager m_templateManager;
+    private final CRMjServerAjaxManager m_ajaxManager;
 
     private final VelocityTemplateEngine m_engine;
 
-    public CRMjServerManager(ServerProperties properties, CRMjDatabaseManager database) {
+    public CRMjServerManager(ServerProperties properties, CRMjDatabaseManager databaseManager) {
         m_properties = properties;
-        m_database = database;
+        m_databaseManager = databaseManager;
+
+        m_templateManager = new CRMjServerTemplateManager();
+        m_ajaxManager = new CRMjServerAjaxManager(m_databaseManager);
 
         m_engine = new VelocityTemplateEngine();
 
         configureServer();
-        CRMjTemplates.mapRoutes(m_engine);
+        m_templateManager.mapRoutes(m_engine);
+        m_ajaxManager.mapRoutes();
 
         Spark.awaitInitialization();
         s_LOGGER.info("Server initialization complete");

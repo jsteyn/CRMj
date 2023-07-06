@@ -1,3 +1,20 @@
 #macro(contacts_content)
     <h3>Contacts</h3>
+    <div>
+        <button onclick="pullContacts();">List contacts</button>
+        <button>Add contact</button>
+    </div>
+    <div id="contact-list-container">
+
+    </div>
 #end
+
+<script>
+    let contactContainer = $("#contact-list-container");
+
+    function pullContacts() {
+        runAjax("post", "/get_contacts", null, function() {
+            console.log(this.response);
+        });
+    }
+</script>
