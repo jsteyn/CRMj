@@ -64,3 +64,11 @@ footer {
 .tab-content.active {
     display: inherit;
 }
+
+.btn {
+
+}
+
+.btn:disabled {
+
+}

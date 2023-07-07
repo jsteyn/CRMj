@@ -1,20 +1,90 @@
-#macro(contacts_content)
-    <h3>Contacts</h3>
+#macro(contact_item)
     <div>
-        <button onclick="pullContacts();">List contacts</button>
-        <button>Add contact</button>
-    </div>
-    <div id="contact-list-container">
 
     </div>
 #end
 
-<script>
-    let contactContainer = $("#contact-list-container");
+#macro(contacts_content)
+    <h3>Contacts</h3>
+    <div>
+        <button onclick="pullContacts();">List contacts</button>
+        <button onclick="toggleAddContactContainer();">Add contact</button>
+    </div>
 
-    function pullContacts() {
-        runAjax("post", "/get_contacts", null, function() {
-            console.log(this.response);
+    <div id="add-contact-container">
+        <label for="add-contact-first-name">First Name</label>
+        <input type="text" id="add-contact-first-name" class="contact-first-name" />
+        <label for="add-contact-middle-names">Middle Names</label>
+        <input type="text" id="add-contact-middle-names" class="contact-middle-names" />
+        <label for="add-contact-last-name">Last Name</label>
+        <input type="text" id="add-contact-last-name" class="contact-last-name" />
+
+        <button id="add-contact-submit" class="btn" onclick="addContact();">Submit</button>
+    </div>
+
+    <div id="contact-list-container">
+
+    </div>
+
+    <script>
+        let showAddContactContainer = localStorage["showAddContactContainer"] || false;
+        localStorage["showAddContactContainer"] = showAddContactContainer;
+
+        let addContactContainer  = $("#add-contact-container");
+        let contactListContainer = $("#contact-list-container");
+
+        let addContactFirstName   = $("#add-contact-first-name");
+        let addContactMiddleNames = $("#add-contact-middle-names");
+        let addContactLastName    = $("#add-contact-last-name");
+        let addContactSubmit      = $("#add-contact-submit");
+
+        updateAddContactContainer();
+
+        addContactContainer.children("input").on("change", function() {
+            addContactSubmit.prop("disabled", addContactFirstName.val() === "");
+            console.log(addContactSubmit.prop("disabled"));
         });
-    }
-</script>
+
+        function validateContact() {
+            let isValid = true;
+            isValid &= addContactFirstName.val() !== "";
+            return isValid;
+        }
+
+        function pullContacts() {
+            runAjax("post", "/get_contacts", null, function() {
+                console.log(this.response);
+            });
+        }
+
+        function addContact() {
+            if (validateContact()) {
+                let data = JSON.stringify({
+                    "firstName": addContactFirstName.val(),
+                    "middleNames": addContactMiddleNames.val(),
+                    "lastName": addContactLastName.val(),
+                });
+                runAjax("post", "/add_contact", data, function() {
+                    let response = JSON.parse(this.response);
+                    if (response["success"]) {
+                        console.log("Contact added");
+                    } else {
+                        console.log("Failed to add contact");
+                    }
+                });
+            }
+        }
+
+        function toggleAddContactContainer() {
+            showAddContactContainer = !showAddContactContainer;
+            localStorage["showAddContact"] = showAddContactContainer;
+            updateAddContactContainer();
+        }
+        function updateAddContactContainer() {
+            if (showAddContactContainer)
+                addContactContainer.show();
+            else
+                addContactContainer.hide();
+        }
+    </script>
+#end
