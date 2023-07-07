@@ -1,6 +1,7 @@
 package com.jannetta.crmj.app;
 
 import com.jannetta.crmj.server.ServerProperties;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Spark;
@@ -17,7 +18,7 @@ public class CRMjServerManager {
 
     private final VelocityTemplateEngine m_engine;
 
-    public CRMjServerManager(ServerProperties properties, CRMjDatabaseManager databaseManager) {
+    public CRMjServerManager(@NotNull ServerProperties properties, @NotNull CRMjDatabaseManager databaseManager) {
         m_properties = properties;
         m_databaseManager = databaseManager;
 

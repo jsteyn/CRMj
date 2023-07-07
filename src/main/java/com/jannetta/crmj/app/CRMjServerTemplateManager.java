@@ -1,5 +1,6 @@
 package com.jannetta.crmj.app;
 
+import org.jetbrains.annotations.NotNull;
 import spark.ModelAndView;
 import spark.Spark;
 import spark.TemplateViewRoute;
@@ -14,11 +15,11 @@ public class CRMjServerTemplateManager {
 
     }
 
-    public void mapRoutes(VelocityTemplateEngine engine) {
+    public void mapRoutes(@NotNull VelocityTemplateEngine engine) {
         Spark.get("/", index, engine);
     }
 
-    private static ModelAndView basicTemplate(String templatePath) {
+    private static ModelAndView basicTemplate(@NotNull String templatePath) {
         return new ModelAndView(new HashMap<>(), templatePath);
     }
 }

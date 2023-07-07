@@ -4,15 +4,16 @@ import com.jannetta.crmj.database.DatabaseProperties;
 import com.jannetta.crmj.database.model.Contact;
 import com.jannetta.crmj.database.DatabaseManager;
 import org.hibernate.Session;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class CRMjDatabaseManager extends DatabaseManager {
-    public CRMjDatabaseManager(DatabaseProperties properties) {
+    public CRMjDatabaseManager(@NotNull DatabaseProperties properties) {
         super(properties);
     }
 
-    public void insert(Contact contact) {
+    public void insert(@NotNull Contact contact) {
         getSession().persist(contact);
     }
 
@@ -25,7 +26,7 @@ public class CRMjDatabaseManager extends DatabaseManager {
     }
 
     @Override
-    protected void onOpen(Session session) {
+    protected void onOpen(@NotNull Session session) {
 
     }
 

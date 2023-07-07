@@ -3,6 +3,7 @@ package com.jannetta.crmj.app;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.jannetta.crmj.database.model.Contact;
+import org.jetbrains.annotations.NotNull;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
@@ -13,7 +14,7 @@ import java.util.List;
 public class CRMjServerAjaxManager {
     private final CRMjDatabaseManager m_databaseManager;
 
-    public CRMjServerAjaxManager(CRMjDatabaseManager databaseManager) {
+    public CRMjServerAjaxManager(@NotNull CRMjDatabaseManager databaseManager) {
         m_databaseManager = databaseManager;
     }
 
@@ -22,7 +23,7 @@ public class CRMjServerAjaxManager {
         Spark.post("/add_contact", this::addContact);
     }
 
-    private String getAllContacts(Request request, Response response) {
+    private String getAllContacts(@NotNull Request request, @NotNull Response response) {
         response.type("application/json");
 
         m_databaseManager.open();
@@ -33,7 +34,7 @@ public class CRMjServerAjaxManager {
         return gson.toJson(contacts);
     }
 
-    private String addContact(Request request, Response response) {
+    private String addContact(@NotNull Request request, @NotNull Response response) {
         response.type("application/json");
 
         Gson gson = new Gson();

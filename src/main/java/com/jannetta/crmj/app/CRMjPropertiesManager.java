@@ -2,6 +2,7 @@ package com.jannetta.crmj.app;
 
 import com.jannetta.crmj.database.DatabaseProperties;
 import com.jannetta.crmj.server.ServerProperties;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +66,7 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
         return m_databaseDriver;
     }
 
-    public void setDatabaseDriver(String databaseDriver) {
+    public void setDatabaseDriver(@NotNull String databaseDriver) {
         m_databaseDriver = databaseDriver;
         m_isDirty = true;
     }
@@ -74,7 +75,7 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
         return m_databasePath;
     }
 
-    public void setDatabasePath(Path path) {
+    public void setDatabasePath(@NotNull Path path) {
         m_databasePath = path;
     }
 
@@ -82,7 +83,7 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
         return m_databaseProtocol;
     }
 
-    public void setDatabaseProtocol(String protocol) {
+    public void setDatabaseProtocol(@NotNull String protocol) {
         m_databaseProtocol = protocol;
     }
 
@@ -90,7 +91,7 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
         return m_databaseDialect;
     }
 
-    public void setDatabaseDialect(String protocol) {
+    public void setDatabaseDialect(@NotNull String protocol) {
         m_databaseDialect = protocol;
     }
 
@@ -152,7 +153,7 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
         m_isDirty = false;
     }
 
-    private int readIntProperty(Properties properties, String propertyID, int defaultValue) {
+    private int readIntProperty(@NotNull Properties properties, @NotNull String propertyID, int defaultValue) {
         String rawValue = readStringProperty(properties, propertyID, null);
         if (rawValue == null) {
             m_isDirty = true;
@@ -169,7 +170,7 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
             return defaultValue;
         }
     }
-    private float readFloatProperty(Properties properties, String propertyID, float defaultValue) {
+    private float readFloatProperty(@NotNull Properties properties, @NotNull String propertyID, float defaultValue) {
         String rawValue = readStringProperty(properties, propertyID, null);
         if (rawValue == null) {
             m_isDirty = true;
@@ -186,7 +187,7 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
             return defaultValue;
         }
     }
-    private String readStringProperty(Properties properties, String propertyID, String defaultValue){
+    private String readStringProperty(@NotNull Properties properties, @NotNull String propertyID, String defaultValue){
         String value = properties.getProperty(propertyID);
         if (value == null) {
             s_LOGGER.error(String.format(

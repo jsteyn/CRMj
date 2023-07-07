@@ -6,6 +6,7 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,7 @@ public abstract class DatabaseManager implements AutoCloseable {
     private final SessionFactory m_sessionFactory;
     private Session m_session = null;
 
-    public DatabaseManager(DatabaseProperties properties) {
+    public DatabaseManager(@NotNull DatabaseProperties properties) {
         m_properties = properties;
 
         s_LOGGER.info("Loading database at: [{}]", m_properties.getFullDatabaseUrl());
@@ -62,6 +63,6 @@ public abstract class DatabaseManager implements AutoCloseable {
         return m_session;
     }
 
-    protected abstract void onOpen(Session session);
+    protected abstract void onOpen(@NotNull Session session);
     protected abstract void onClose();
 }
