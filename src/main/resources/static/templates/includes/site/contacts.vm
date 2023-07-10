@@ -9,7 +9,7 @@
     <div id="contact-list-container"></div>
 
     <script>
-        let showAddContactContainer = localStorage["showAddContactContainer"] || false;
+        let showAddContactContainer = localStorage["showAddContactContainer"] === "true";
         localStorage["showAddContactContainer"] = showAddContactContainer;
 
         $("#add-contact-container").replaceWith(generateContactItem(
@@ -91,7 +91,7 @@
 
         function toggleAddContactContainer() {
             showAddContactContainer = !showAddContactContainer;
-            localStorage["showAddContact"] = showAddContactContainer;
+            localStorage["showAddContactContainer"] = showAddContactContainer;
             updateAddContactContainer();
         }
         function updateAddContactContainer() {
