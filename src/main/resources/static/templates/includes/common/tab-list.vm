@@ -1,7 +1,7 @@
 #macro(tablist $tabs)
     <div class="tab">
         #foreach($tab in $tabs)
-            <button data-target="$tab.id">$tab.name</button>
+            <button id="${tab.id}-button" data-target="$tab.id">$tab.name</button>
         #end
     </div>
     <div class="tab-content-container">

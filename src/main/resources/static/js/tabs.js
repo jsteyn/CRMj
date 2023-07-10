@@ -1,10 +1,16 @@
 
 let currentContent = null;
 let currentContentButton = null;
+if (localStorage["currentContentButton"] && $("#" + localStorage["currentContentButton"])) {
+    onTabSelect($("#" + localStorage["currentContentButton"]));
+}
 
 $(".tab button").on("click", function () {
-    let newContentButton = $(this);
-    let newContent = $("#" + $(this).data("target"));
+    onTabSelect($(this));
+});
+
+function onTabSelect(newContentButton) {
+    let newContent = $("#" + newContentButton.data("target"));
 
     if (currentContentButton != null) {
         currentContent.removeClass("active");
@@ -20,4 +26,5 @@ $(".tab button").on("click", function () {
         currentContent.addClass("active");
         currentContentButton.addClass("active");
     }
-});
+    localStorage["currentContentButton"] = currentContentButton ? currentContentButton.attr("id") : null;
+}
