@@ -5,32 +5,34 @@
         <button onclick="toggleAddContactContainer();">Add contact</button>
     </div>
 
-    <div id="add-contact-container">
-        <label for="add-contact-first-name">First Name</label>
-        <input type="text" id="add-contact-first-name" class="contact-first-name" />
-        <label for="add-contact-middle-names">Middle Names</label>
-        <input type="text" id="add-contact-middle-names" class="contact-middle-names" />
-        <label for="add-contact-last-name">Last Name</label>
-        <input type="text" id="add-contact-last-name" class="contact-last-name" />
-
-        <button id="add-contact-submit" class="btn" onclick="addContact();">Submit</button>
-    </div>
-
-    <div id="contact-list-container">
-
-    </div>
+    <div id="add-contact-container"></div>
+    <div id="contact-list-container"></div>
 
     <script>
+        if (!String.prototype.format) {
+            String.prototype.format = function() {
+                let args = arguments;
+                return this.replace(/{(\d+)}/g, function(match, number) {
+                    return typeof args[number] != "undefined"
+                        ? args[number]
+                        : match
+                });
+            };
+        }
+
         let showAddContactContainer = localStorage["showAddContactContainer"] || false;
         localStorage["showAddContactContainer"] = showAddContactContainer;
 
-        let addContactContainer  = $("#add-contact-container");
+        $("#add-contact-container").replaceWith(generateContactItem(
+                "id=\"add-contact-container\"", "", "", "", "addContact()", "Submit"
+        ));
+        let addContactContainer = $("#add-contact-container");
         let contactListContainer = $("#contact-list-container");
 
-        let addContactFirstName   = $("#add-contact-first-name");
-        let addContactMiddleNames = $("#add-contact-middle-names");
-        let addContactLastName    = $("#add-contact-last-name");
-        let addContactSubmit      = $("#add-contact-submit");
+        let addContactFirstName   = addContactContainer.children(".contact-first-name");
+        let addContactMiddleNames = addContactContainer.children(".contact-middle-names");
+        let addContactLastName    = addContactContainer.children(".contact-last-name");
+        let addContactSubmit      = addContactContainer.children(".contact-submit");
 
         updateAddContactContainer();
 
@@ -38,6 +40,25 @@
             addContactSubmit.prop("disabled", addContactFirstName.val() === "");
             console.log(addContactSubmit.prop("disabled"));
         });
+
+        function generateContactItem(container, firstName, middleNames, lastName, onclick, buttonLabel) {
+            container   = (typeof container   === "undefined") ? "" : container;
+            firstName   = (typeof firstName   === "undefined") ? "" : firstName;
+            middleNames = (typeof middleNames === "undefined") ? "" : middleNames;
+            lastName    = (typeof lastName    === "undefined") ? "" : lastName;
+            onclick     = (typeof onclick     === "undefined") ? "" : onclick;
+            buttonLabel = (typeof buttonLabel === "undefined") ? "" : buttonLabel;
+            return `<div ${container}>
+                        <label for="contact-first-name">First Name</label>
+                        <input type="text" id="contact-first-name" class="contact-first-name" value="${firstName}" />
+                        <label for="contact-middle-names">Middle Names</label>
+                        <input type="text" id="contact-middle-names" class="contact-middle-names" value="${middleNames}" />
+                        <label for="contact-last-name">Last Name</label>
+                        <input type="text" id="contact-last-name" class="contact-last-name" value="${lastName}" />
+
+                        <button id="add-contact-submit" class="btn" onclick="${onclick}">${buttonLabel}</button>
+                    </div>`;
+        }
 
         function validateContact() {
             let isValid = true;
@@ -50,18 +71,9 @@
                 let response = JSON.parse(this.response);
                 contactListContainer.empty();
                 response.forEach(function(contact) {
-                    let contactItem = `
-                    <div class="contact-list-item">
-                        <label for="contact-first-name">First Name</label>
-                        <input type="text" id="contact-first-name" class="contact-first-name" value="${contact.firstName}" />
-                        <label for="contact-middle-names">Middle Names</label>
-                        <input type="text" id="contact-middle-names" class="contact-middle-names" value="${contact.middleNames}" />
-                        <label for="contact-last-name">Last Name</label>
-                        <input type="text" id="contact-last-name" class="contact-last-name" value="${contact.lastName}" />
-
-                        <button id="add-contact-submit" class="btn" onclick="updateContact();">Update</button>
-                    </div>`;
-                    contactListContainer.append(contactItem);
+                    contactListContainer.append(generateContactItem(
+                        "class=\"contact-list-item\"", contact.firstName, contact.middleNames, contact.lastName, "updateContact()", "Update"
+                    ));
                 })
             });
         }
