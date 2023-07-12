@@ -13,45 +13,54 @@
         localStorage["showAddContactContainer"] = showAddContactContainer;
 
         $("#add-contact-container").replaceWith(generateContactItem(
-                "id=\"add-contact-container\"", "", "", "", "addContact()", "Submit"
+                "id=\"add-contact-container\"", null, "addContact()", "Submit"
         ));
         let addContactContainer = $("#add-contact-container");
         let contactListContainer = $("#contact-list-container");
 
-        let addContactFirstName   = addContactContainer.children(".contact-first-name");
-        let addContactMiddleNames = addContactContainer.children(".contact-middle-names");
-        let addContactLastName    = addContactContainer.children(".contact-last-name");
-        let addContactSubmit      = addContactContainer.children(".contact-submit");
+        updateAddContactContainerVisibility();
 
-        updateAddContactContainer();
+        function generateContactItem(containerAttributes, contact, onclick, buttonLabel) {
+            contact = (contact === null) ? {"firstName": "", "middleNames": "", "lastName": ""} : contact;
+            let isValid = validateContact(contact);
+            let disabled = isValid ? "" : "disabled";
+            let container = $(
+                `<div ${containerAttributes}>
+                    <label for="contact-first-name">First Name</label>
+                    <input type="text" id="contact-first-name" class="contact-first-name" value="${contact.firstName}" />
+                    <label for="contact-middle-names">Middle Names</label>
+                    <input type="text" id="contact-middle-names" class="contact-middle-names" value="${contact.middleNames}" />
+                    <label for="contact-last-name">Last Name</label>
+                    <input type="text" id="contact-last-name" class="contact-last-name" value="${contact.lastName}" />
 
-        addContactContainer.children("input").on("change", function() {
-            addContactSubmit.prop("disabled", addContactFirstName.val() === "");
-            console.log(addContactSubmit.prop("disabled"));
-        });
-
-        function generateContactItem(container, firstName, middleNames, lastName, onclick, buttonLabel) {
-            container   = (typeof container   === "undefined") ? "" : container;
-            firstName   = (typeof firstName   === "undefined") ? "" : firstName;
-            middleNames = (typeof middleNames === "undefined") ? "" : middleNames;
-            lastName    = (typeof lastName    === "undefined") ? "" : lastName;
-            onclick     = (typeof onclick     === "undefined") ? "" : onclick;
-            buttonLabel = (typeof buttonLabel === "undefined") ? "" : buttonLabel;
-            return `<div ${container}>
-                        <label for="contact-first-name">First Name</label>
-                        <input type="text" id="contact-first-name" class="contact-first-name" value="${firstName}" />
-                        <label for="contact-middle-names">Middle Names</label>
-                        <input type="text" id="contact-middle-names" class="contact-middle-names" value="${middleNames}" />
-                        <label for="contact-last-name">Last Name</label>
-                        <input type="text" id="contact-last-name" class="contact-last-name" value="${lastName}" />
-
-                        <button id="add-contact-submit" class="btn" onclick="${onclick}">${buttonLabel}</button>
-                    </div>`;
+                    <button id="add-contact-submit" class="btn" onclick="${onclick}" ${disabled}>${buttonLabel}</button>
+                </div>`
+            );
+            container.children("input").on("change", function() {
+                let container = $(this).parent();
+                console.log("Updating Item:", getContactFromContainer(container));
+                container.children("button").prop("disabled", !validateContact(getContactFromContainer(container)));
+            });
+            return container;
         }
 
-        function validateContact() {
+        function generateContactListItem(contact) {
+            return generateContactItem("class=\"contact-list-item\"", contact, "updateContact()", "Update");
+        }
+
+        function getContactFromContainer(container) {
+            console.log("Generating Contact:", container);
+            return {
+                "firstName": container.children(".contact-first-name").val(),
+                "middleNames": container.children(".contact-middle-names").val(),
+                "lastName": container.children(".contact-last-name").val(),
+            };
+        }
+
+        function validateContact(contact) {
+            console.log("Validating:", contact);
             let isValid = true;
-            isValid &= addContactFirstName.val() !== "";
+            isValid &= contact["firstName"] !== "";
             return isValid;
         }
 
@@ -60,23 +69,18 @@
                 let response = JSON.parse(this.response);
                 contactListContainer.empty();
                 response.forEach(function(contact) {
-                    contactListContainer.append(generateContactItem(
-                        "class=\"contact-list-item\"", contact.firstName, contact.middleNames, contact.lastName, "updateContact()", "Update"
-                    ));
+                    contactListContainer.append(generateContactListItem(contact));
                 })
             });
         }
 
         function addContact() {
-            if (validateContact()) {
-                let data = JSON.stringify({
-                    "firstName": addContactFirstName.val(),
-                    "middleNames": addContactMiddleNames.val(),
-                    "lastName": addContactLastName.val(),
-                });
-                runAjax("post", "/add_contact", data, function() {
+            let contact = getContactFromContainer(addContactContainer);
+            if (validateContact(contact)) {
+                runAjax("post", "/add_contact", contact, function() {
                     let response = JSON.parse(this.response);
                     if (response["success"]) {
+                        contactListContainer.append(generateContactListItem(contact));
                         console.log("Contact added");
                     } else {
                         console.log("Failed to add contact");
@@ -92,9 +96,9 @@
         function toggleAddContactContainer() {
             showAddContactContainer = !showAddContactContainer;
             localStorage["showAddContactContainer"] = showAddContactContainer;
-            updateAddContactContainer();
+            updateAddContactContainerVisibility();
         }
-        function updateAddContactContainer() {
+        function updateAddContactContainerVisibility() {
             if (showAddContactContainer)
                 addContactContainer.show();
             else

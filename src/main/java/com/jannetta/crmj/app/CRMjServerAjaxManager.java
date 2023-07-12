@@ -37,6 +37,7 @@ public class CRMjServerAjaxManager {
     private String addContact(@NotNull Request request, @NotNull Response response) {
         response.type("application/json");
 
+        System.out.println(request.body());
         Gson gson = new Gson();
         Contact contact = gson.fromJson(request.body(), Contact.class);
         m_databaseManager.open();
