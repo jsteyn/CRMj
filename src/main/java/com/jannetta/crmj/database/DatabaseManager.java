@@ -61,31 +61,33 @@ public class DatabaseManager {
         m_session = null;
     }
 
-    public <T> void create(T object) {
+    public <T> void create(@NotNull T object) {
         m_session.persist(object);
     }
 
-    public <T> List<T> readAll(Class<T> type) {
+    public <T> List<T> readAll(@NotNull Class<T> type) {
         return m_session.createQuery("from " + type.getName(), type).getResultList();
     }
 
-    public <T> List<T> readFrom(Class<T> type, String where, Map<String, Object> parameters) {
+    public <T> List<T> readFrom(@NotNull Class<T> type, @NotNull String where, Map<String, Object> parameters) {
         Query<T> query = m_session.createQuery(String.format("from %s where %s", type.getName(), where), type);
-        query.setProperties(parameters);
+        if (parameters != null)
+            query.setProperties(parameters);
         return query.getResultList();
     }
 
-    public List<Object[]> read(String selection, String from, String where, Map<String, Object> parameters) {
+    public List<Object[]> read(@NotNull String selection, @NotNull String from, @NotNull String where, Map<String, Object> parameters) {
         Query<Object[]> query = m_session.createQuery(String.format("select %s from %s where %s", selection, from, where), Object[].class);
-        query.setProperties(parameters);
+        if (parameters != null)
+            query.setProperties(parameters);
         return query.getResultList();
     }
 
-    public <T> void update(T object) {
+    public <T> void update(@NotNull T object) {
         m_session.merge(object);
     }
 
-    public <T> void delete(T object) {
+    public <T> void delete(@NotNull T object) {
         m_session.delete(object);
     }
 }
