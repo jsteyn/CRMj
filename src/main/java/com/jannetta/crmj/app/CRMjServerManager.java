@@ -1,5 +1,6 @@
 package com.jannetta.crmj.app;
 
+import com.jannetta.crmj.database.DatabaseManager;
 import com.jannetta.crmj.server.ServerProperties;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -11,14 +12,14 @@ public class CRMjServerManager {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(CRMjServerManager.class);
 
     private final ServerProperties m_properties;
-    private final CRMjDatabaseManager m_databaseManager;
+    private final DatabaseManager m_databaseManager;
 
     private final CRMjServerTemplateManager m_templateManager;
     private final CRMjServerAjaxManager m_ajaxManager;
 
     private final VelocityTemplateEngine m_engine;
 
-    public CRMjServerManager(@NotNull ServerProperties properties, @NotNull CRMjDatabaseManager databaseManager) {
+    public CRMjServerManager(@NotNull ServerProperties properties, @NotNull DatabaseManager databaseManager) {
         m_properties = properties;
         m_databaseManager = databaseManager;
 

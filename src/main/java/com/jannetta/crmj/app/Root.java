@@ -1,16 +1,16 @@
 package com.jannetta.crmj.app;
 
 import com.jannetta.crmj.database.DatabaseManager;
+import com.jannetta.crmj.database.model.Contact;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class Root {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(Root.class);
     private final CRMjPropertiesManager m_propertiesManager;
-    private final CRMjDatabaseManager m_databaseManager;
+    private final DatabaseManager m_databaseManager;
     private final CRMjServerManager m_serverManager;
 
     public Root() {
@@ -23,7 +23,7 @@ public class Root {
         }
         m_propertiesManager = propertiesManager;
 
-        m_databaseManager = new CRMjDatabaseManager(m_propertiesManager);
+        m_databaseManager = new DatabaseManager(m_propertiesManager, new Class[]{Contact.class});
         m_serverManager = new CRMjServerManager(m_propertiesManager, m_databaseManager);
 
         if (m_propertiesManager.isDirty())
@@ -38,7 +38,7 @@ public class Root {
         return m_serverManager;
     }
 
-    public final CRMjDatabaseManager getDatabaseManager() {
+    public final DatabaseManager getDatabaseManager() {
         return m_databaseManager;
     }
 }
