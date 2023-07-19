@@ -1,7 +1,7 @@
 package com.jannetta.crmj.app;
 
 import com.jannetta.crmj.database.DatabaseManager;
-import com.jannetta.crmj.database.model.Contact;
+import com.jannetta.crmj.database.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,15 @@ public class Root {
         }
         m_propertiesManager = propertiesManager;
 
-        m_databaseManager = new DatabaseManager(m_propertiesManager, new Class[]{Contact.class});
+        m_databaseManager = new DatabaseManager(m_propertiesManager, new Class[]{
+            Address.class,
+            Organisation.class,
+            Person.class,
+            PersonSocialMedia.class,
+            Project.class,
+            SocialMedia.class,
+            Stage.class
+        });
         m_serverManager = new CRMjServerManager(m_propertiesManager, m_databaseManager);
 
         if (m_propertiesManager.isDirty())

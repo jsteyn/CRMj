@@ -1,6 +1,5 @@
 package com.jannetta.crmj.database;
 
-import com.jannetta.crmj.database.model.Contact;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
