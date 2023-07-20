@@ -38,7 +38,6 @@
             );
             container.children("input").on("change", function() {
                 let container = $(this).parent();
-                console.log("Updating Item:", getContactFromContainer(container));
                 container.children("button").prop("disabled", !validateContact(getContactFromContainer(container)));
             });
             return container;
@@ -49,7 +48,6 @@
         }
 
         function getContactFromContainer(container) {
-            console.log("Generating Contact:", container);
             return {
                 "firstName": container.children(".contact-first-name").val(),
                 "middleNames": container.children(".contact-middle-names").val(),
@@ -58,19 +56,19 @@
         }
 
         function validateContact(contact) {
-            console.log("Validating:", contact);
             let isValid = true;
             isValid &= contact["firstName"] !== "";
             return isValid;
         }
 
         function pullContacts() {
-            runAjax("post", "/get_contacts", null, function() {
+            runAjax("post", "/get_person_list_ranged", {"begin": 0, "amount": 100}, function() {
                 let response = JSON.parse(this.response);
                 contactListContainer.empty();
-                response.forEach(function(contact) {
-                    contactListContainer.append(generateContactListItem(contact));
-                })
+                console.log(response);
+                // response.forEach(function(contact) {
+                //     contactListContainer.append(generateContactListItem(contact));
+                // })
             });
         }
 

@@ -11,11 +11,12 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DatabaseManager {
+public class DatabaseManager implements Closeable {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(DatabaseManager.class);
 
     private final DatabaseProperties m_properties;
@@ -54,6 +55,7 @@ public class DatabaseManager {
         m_session.beginTransaction();
     }
 
+    @Override
     public void close() {
         m_session.getTransaction().commit();
         m_session.close();
@@ -75,8 +77,17 @@ public class DatabaseManager {
         return query.getResultList();
     }
 
-    public List<Object[]> read(@NotNull String selection, @NotNull String from, @NotNull String where, Map<String, Object> parameters) {
-        Query<Object[]> query = m_session.createQuery(String.format("select %s from %s where %s", selection, from, where), Object[].class);
+    public List<Object[]> read(@NotNull String rawQuery, Map<String, Object> parameters) {
+        Query<Object[]> query = m_session.createQuery(rawQuery, Object[].class);
+        if (parameters != null)
+            query.setProperties(parameters);
+        return query.getResultList();
+    }
+
+    public List<Object[]> readLimit(@NotNull String rawQuery, Map<String, Object> parameters, int limit, int offset) {
+        Query<Object[]> query = m_session.createQuery(rawQuery, Object[].class);
+        query.setFirstResult(offset);
+        query.setMaxResults(limit);
         if (parameters != null)
             query.setProperties(parameters);
         return query.getResultList();
