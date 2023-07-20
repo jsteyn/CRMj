@@ -62,13 +62,9 @@
         }
 
         function pullContacts() {
-            runAjax("post", "/get_person_list_ranged", {"begin": 0, "amount": 100}, function() {
-                let response = JSON.parse(this.response);
+            runAjax("post", "/get_person_list_ranged", {"begin": 0, "amount": 100}, function(response) {
                 contactListContainer.empty();
                 console.log(response);
-                // response.forEach(function(contact) {
-                //     contactListContainer.append(generateContactListItem(contact));
-                // })
             });
         }
 
