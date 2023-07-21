@@ -1,0 +1,23 @@
+:root {
+    --container-border-color: darkblue;
+}
+
+#contact-container {
+    display: flex;
+    width: 100%;
+}
+
+#contact-list-container {
+    flex: 1;
+    padding: 4px;
+    margin-right: 4px;
+
+    border: 2px solid var(--container-border-color);
+}
+
+#contact-display-container {
+    flex: 1;
+    padding: 4px;
+
+    border: 2px solid var(--container-border-color);
+}

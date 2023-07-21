@@ -1,12 +1,15 @@
 #macro(contacts_content)
+    <link rel="stylesheet" href="/css/contacts.css">
     <h3>Contacts</h3>
     <div>
         <button onclick="pullContacts();">List contacts</button>
         <button onclick="toggleAddContactContainer();">Add contact</button>
     </div>
 
-    <div id="add-contact-container"></div>
-    <div id="contact-list-container"></div>
+    <div id="contact-container">
+        <div id="contact-list-container"></div>
+        <div id="contact-display-container"></div>
+    </div>
 
     <script>
         let showAddContactContainer = localStorage["showAddContactContainer"] === "true";
@@ -15,8 +18,9 @@
         $("#add-contact-container").replaceWith(generateContactItem(
                 "id=\"add-contact-container\"", null, "addContact()", "Submit"
         ));
-        let addContactContainer = $("#add-contact-container");
         let contactListContainer = $("#contact-list-container");
+        let contactDisplayContainer = $("#contact-display-container");
+        let addContactContainer = $("#add-contact-container");
 
         updateAddContactContainerVisibility();
 
