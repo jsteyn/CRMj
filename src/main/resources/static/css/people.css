@@ -1,5 +1,8 @@
 :root {
     --container-border-color: darkblue;
+
+    --selector-color-unselected: black;
+    --selector-color-selected: darkmagenta;
 }
 
 #people-container {
@@ -13,6 +16,18 @@
     margin-right: 4px;
 
     border: 2px solid var(--container-border-color);
+}
+
+#people-list-container p {
+    font-size: large;
+    font-weight: bold;
+    cursor: pointer;
+
+    color: var(--selector-color-unselected);
+}
+
+#people-list-container p.selected {
+    color: var(--selector-color-selected);
 }
 
 #person-edit-container {

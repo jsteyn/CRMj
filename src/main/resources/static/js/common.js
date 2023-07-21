@@ -3,6 +3,7 @@ function runAjax(type, url, data, onload) {
     const xhttp = new XMLHttpRequest();
     xhttp.onload = function() {
         let response = JSON.parse(this.response);
+        console.log("Received response [", response, "]");
         if (response["success"])
             onload(response);
         else
