@@ -2,12 +2,12 @@
     --container-border-color: darkblue;
 }
 
-#contact-container {
+#people-container {
     display: flex;
     width: 100%;
 }
 
-#contact-list-container {
+#people-list-container {
     flex: 1;
     padding: 4px;
     margin-right: 4px;
@@ -15,9 +15,16 @@
     border: 2px solid var(--container-border-color);
 }
 
-#contact-display-container {
+#person-edit-container {
     flex: 1;
+    display: grid;
+    grid-template-columns: max-content max-content;
+    grid-gap: 5px;
     padding: 4px;
 
     border: 2px solid var(--container-border-color);
+}
+
+#person-edit-container label {
+    text-align: right;
 }

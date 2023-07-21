@@ -1,0 +1,82 @@
+#macro(people_content)
+    <link rel="stylesheet" href="/css/people.css">
+    <h3>People</h3>
+    <div>
+        <button onclick="retrievePersonList();">Refresh</button>
+    </div>
+
+    <div id="people-container">
+        <div id="people-list-container">
+
+        </div>
+        <div id="person-edit-container">
+            <label>First Name:</label><input class="first-name" type="text" value="" />
+            <label>Middle Names:</label><input class="middle-names" type="text" value="" />
+            <label>Last Name:</label><input class="last-name" type="text" value="" />
+            <label>Title:</label><input class="title" type="text" value="" />
+
+            <button class="btn-update" onclick="sendUpdatePerson();">Update</button>
+            <button class="btn-add" onclick="sendAddPerson();">Add New</button>
+        </div>
+    </div>
+
+    <script>
+        let peopleListContainer = $("#people-list-container");
+        let personEditContainer = $("#person-edit-container");
+
+        let personListIndex = 0;
+        let personListAmount = 100;
+
+        setContainerAddMode(personEditContainer);
+
+        function setContainerAddMode(container) {
+            container.children(".btn-update").hide();
+            container.children(".btn-add").show();
+        }
+
+        function setContainerUpdateMode(container) {
+            container.children(".btn-add").hide();
+            container.children(".btn-update").show();
+        }
+
+        function getPersonFromContainer(container) {
+            return {
+                "firstName": container.children(".first-name").val(),
+                "middleNames": container.children(".middle-names").val(),
+                "lastName": container.children(".last-name").val(),
+                "title": container.children(".title").val(),
+            };
+        }
+
+        function validatePerson(person) {
+            let isValid = true;
+            isValid &= person["firstName"] !== "";
+            return isValid;
+        }
+
+        function retrievePersonList() {
+            runAjax("post", "/get_person_list_ranged", {"begin": personListIndex, "amount": personListAmount}, function(response) {
+                peopleListContainer.empty();
+                console.log(response);
+            });
+        }
+
+        function sendAddPerson() {
+            let person = getContactFromContainer(personEditContainer);
+            if (validatePerson(person)) {
+                runAjax("post", "/add_contact", person, function(response) {
+                    retrievePersonList();
+                    console.log("Contact added");
+                });
+            }
+        }
+
+        function sendUpdatePerson() {
+
+        }
+
+        function sendRemovePerson() {
+
+        }
+    </script>
+#end
