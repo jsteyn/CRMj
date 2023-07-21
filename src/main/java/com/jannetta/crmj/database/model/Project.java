@@ -8,7 +8,7 @@ import java.util.Date;
 @Entity
 @Table(name = "projects")
 public class Project {
-    @SerializedName("project_id")
+    @SerializedName("projectId")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_id")
@@ -18,10 +18,10 @@ public class Project {
     @Column(name = "name", length = 50)
     private String m_name;
 
-    @SerializedName("start_date")
+    @SerializedName("startDate")
     @Column(name = "start_date")
     private Date m_startDate;
-    @SerializedName("close_date")
+    @SerializedName("closeDate")
     @Column(name = "close_date")
     private Date m_closeDate;
 

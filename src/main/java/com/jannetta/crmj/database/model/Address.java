@@ -10,19 +10,19 @@ import java.util.Set;
 @Entity
 @Table(name = "addresses")
 public class Address {
-    @SerializedName("address_id")
+    @SerializedName("addressId")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "address_id")
     private int m_id;
 
-    @SerializedName("address_line_1")
+    @SerializedName("addressLine1")
     @Column(name = "address_line_1", length = 50)
     private String m_addressLine1;
-    @SerializedName("address_line_2")
+    @SerializedName("addressLine2")
     @Column(name = "address_line_2", length = 50)
     private String m_addressLine2;
-    @SerializedName("address_line_3")
+    @SerializedName("addressLine3")
     @Column(name = "address_line_3", length = 50)
     private String m_addressLine3;
 

@@ -8,7 +8,7 @@ import java.util.Set;
 @Entity
 @Table(name = "organisations")
 public class Organisation {
-    @SerializedName("organisation_id")
+    @SerializedName("organisationId")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "organisation_id")

@@ -8,19 +8,19 @@ import java.util.Set;
 @Entity
 @Table(name = "people")
 public class Person {
-    @SerializedName("person_id")
+    @SerializedName("personId")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id")
     private int m_id;
 
-    @SerializedName("first_name")
+    @SerializedName("firstName")
     @Column(name = "first_name", length = 50)
     private String m_firstName;
-    @SerializedName("middle_names")
+    @SerializedName("middleNames")
     @Column(name = "middle_names", length = 50)
     private String m_middleNames;
-    @SerializedName("last_name")
+    @SerializedName("lastName")
     @Column(name = "last_name", length = 50)
     private String m_lastName;
     @SerializedName("title")

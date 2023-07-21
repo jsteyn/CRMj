@@ -8,7 +8,7 @@ import java.util.Set;
 @Entity
 @Table(name = "social_media")
 public class SocialMedia {
-    @SerializedName("social_media_id")
+    @SerializedName("socialMediaId")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "social_media_id")
