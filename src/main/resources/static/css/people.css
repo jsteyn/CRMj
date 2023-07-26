@@ -32,14 +32,17 @@
 
 #person-edit-container {
     flex: 1;
-    display: grid;
-    grid-template-columns: max-content max-content;
-    grid-gap: 5px;
-    padding: 4px;
 
     border: 2px solid var(--container-border-color);
 }
 
-#person-edit-container label {
+.edit-container-table {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    grid-gap: 5px;
+    padding: 4px;
+}
+
+.edit-container-table label {
     text-align: right;
 }

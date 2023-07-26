@@ -11,14 +11,18 @@
 
         </div>
         <div id="person-edit-container" data-person-id="null">
-            <label>First Name:</label><input class="first-name" type="text" value="" />
-            <label>Middle Names:</label><input class="middle-names" type="text" value="" />
-            <label>Last Name:</label><input class="last-name" type="text" value="" />
-            <label>Title:</label><input class="title" type="text" value="" />
+            <h2 class="person-edit-header"></h2>
 
-            <button class="btn-update" onclick="sendUpdatePerson();">Update</button>
-            <button class="btn-remove" onclick="deletePerson();">Delete</button>
-            <button class="btn-add" onclick="sendAddPerson();">Add New</button>
+            <div class="edit-container-table">
+                <label>First Name:</label><input class="first-name" type="text" value="" />
+                <label>Middle Names:</label><input class="middle-names" type="text" value="" />
+                <label>Last Name:</label><input class="last-name" type="text" value="" />
+                <label>Title:</label><input class="title" type="text" value="" />
+
+                <button class="btn-update" onclick="sendUpdatePerson();">Update</button>
+                <button class="btn-remove" onclick="deletePerson($(this));">Delete</button>
+                <button class="btn-add" onclick="sendAddPerson();">Add New</button>
+            </div>
         </div>
     </div>
 
@@ -56,25 +60,31 @@
         function setContainerAddMode(container) {
             container.data("id", "null");
 
-            container.children(".first-name").val("");
-            container.children(".middle-names").val("");
-            container.children(".last-name").val("");
-            container.children(".title").val("");
+            container.find(".person-edit-header").html("Add New Person");
 
-            container.children(".btn-update").hide();
-            container.children(".btn-add").show();
+            container.find(".first-name").val("");
+            container.find(".middle-names").val("");
+            container.find(".last-name").val("");
+            container.find(".title").val("");
+
+            container.find(".btn-update").hide();
+            container.find(".btn-add").show();
+            container.find(".btn-remove").hide();
         }
 
         function setContainerUpdateMode(container, person) {
             container.data("id", person["id"]);
 
-            container.children(".first-name").val(person["firstName"]);
-            container.children(".middle-names").val(person["middleNames"]);
-            container.children(".last-name").val(person["lastName"]);
-            container.children(".title").val(person["title"]);
+            container.find(".person-edit-header").html(`${person["firstName"]} ${person["lastName"]} (edit)`);
 
-            container.children(".btn-add").hide();
-            container.children(".btn-update").show();
+            container.find(".first-name").val(person["firstName"]);
+            container.find(".middle-names").val(person["middleNames"]);
+            container.find(".last-name").val(person["lastName"]);
+            container.find(".title").val(person["title"]);
+
+            container.find(".btn-add").hide();
+            container.find(".btn-update").show();
+            container.find(".btn-remove").show();
         }
 
         function getPersonFromContainer(container) {
@@ -104,7 +114,7 @@
                 response["people"].forEach(function(person) {
                     peopleListContainer.append(`<p data-id="${person["id"]}">${person["firstName"]} ${person["lastName"]}<\p>`);
                 });
-                peopleListContainer.children("p").on("click", function() {
+                peopleListContainer.find("p").on("click", function() {
                     selectPerson($(this));
                 });
             });
