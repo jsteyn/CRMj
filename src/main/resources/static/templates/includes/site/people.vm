@@ -17,6 +17,7 @@
             <label>Title:</label><input class="title" type="text" value="" />
 
             <button class="btn-update" onclick="sendUpdatePerson();">Update</button>
+            <button class="btn-remove" onclick="deletePerson();">Delete</button>
             <button class="btn-add" onclick="sendAddPerson();">Add New</button>
         </div>
     </div>
@@ -36,13 +37,16 @@
         function selectPerson(personSelector) {
             if (selectedPerson !== null) {
                 selectedPerson.removeClass("selected");
+                if (personSelector !== null && personSelector.data("id") === selectedPerson.data("id")) {
+                    personSelector = null;
+                }
             }
             selectedPerson = personSelector;
             if (selectedPerson === null) {
                 setContainerAddMode(personEditContainer);
             } else {
                 selectedPerson.addClass("selected");
-                let personId = personSelector.data("id");
+                let personId = selectedPerson.data("id");
                 retrievePerson(personId, function (person) {
                     setContainerUpdateMode(personEditContainer, person);
                 });
@@ -80,6 +84,12 @@
                 "lastName": container.children(".last-name").val(),
                 "title": container.children(".title").val(),
             };
+        }
+
+        function deletePerson(person) {
+            if (confirm(`Are you sure you want to delete ${person["firstName"]} ${person["lastName"]}?`)) {
+                sendRemovePerson(person["id"]);
+            }
         }
 
         function validatePerson(person) {
@@ -120,8 +130,10 @@
 
         }
 
-        function sendRemovePerson() {
-
+        function sendRemovePerson(personId, onResponse) {
+            runAjax("post", "/remove_person", {"personId": personId}, function(response) {
+                onResponse();
+            });
         }
     </script>
 #end
