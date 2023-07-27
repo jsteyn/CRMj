@@ -20,7 +20,7 @@
                 <label>Title:</label><input class="title" type="text" value="" />
 
                 <button class="btn-update" onclick="sendUpdatePerson();">Update</button>
-                <button class="btn-remove" onclick="deletePerson($(this));">Delete</button>
+                <button class="btn-remove" onclick="deletePerson();">Delete</button>
                 <button class="btn-add" onclick="sendAddPerson();">Add New</button>
             </div>
         </div>
@@ -39,6 +39,12 @@
         retrievePersonList();
 
         function selectPerson(personSelector) {
+            if (typeof personSelector === "string" || personSelector instanceof String ||
+                typeof personSelector === "number" || personSelector instanceof Number) {
+                personSelector = peopleListContainer.find(`.person-list-record[data-id="${personSelector}"]`)
+                if (personSelector.length === 0)
+                    personSelector = null;
+            }
             if (selectedPerson !== null) {
                 selectedPerson.removeClass("selected");
                 if (personSelector !== null && personSelector.data("id") === selectedPerson.data("id")) {
@@ -73,7 +79,7 @@
         }
 
         function setContainerUpdateMode(container, person) {
-            container.data("id", person["id"]);
+            container.data("id", person["personId"]);
 
             container.find(".person-edit-header").html(`${person["firstName"]} ${person["lastName"]} (edit)`);
 
@@ -88,17 +94,20 @@
         }
 
         function getPersonFromContainer(container) {
+            let id = container.data("id");
             return {
-                "firstName": container.children(".first-name").val(),
-                "middleNames": container.children(".middle-names").val(),
-                "lastName": container.children(".last-name").val(),
-                "title": container.children(".title").val(),
+                ...(!isNaN(id)) && {"personId": id},
+                "firstName": container.find(".first-name").val(),
+                "middleNames": container.find(".middle-names").val(),
+                "lastName": container.find(".last-name").val(),
+                "title": container.find(".title").val(),
             };
         }
 
-        function deletePerson(person) {
+        function deletePerson() {
+            let person = getPersonFromContainer(personEditContainer);
             if (confirm(`Are you sure you want to delete ${person["firstName"]} ${person["lastName"]}?`)) {
-                sendRemovePerson(person["id"]);
+                sendRemovePerson();
             }
         }
 
@@ -108,15 +117,17 @@
             return isValid;
         }
 
-        function retrievePersonList() {
+        function retrievePersonList(onResponse) {
             runAjax("post", "/get_person_list_ranged", {"begin": personListIndex, "amount": personListAmount}, function(response) {
                 peopleListContainer.empty();
                 response["people"].forEach(function(person) {
-                    peopleListContainer.append(`<p data-id="${person["id"]}">${person["firstName"]} ${person["lastName"]}<\p>`);
+                    peopleListContainer.append(`<p class="person-list-record" data-id="${person["personId"]}">${person["firstName"]} ${person["lastName"]}<\p>`);
                 });
-                peopleListContainer.find("p").on("click", function() {
+                peopleListContainer.find(".person-list-record").on("click", function() {
                     selectPerson($(this));
                 });
+                if (onResponse)
+                    onResponse();
             });
         }
 
@@ -126,23 +137,43 @@
             });
         }
 
-        function sendAddPerson() {
+        function sendAddPerson(onResponse) {
             let person = getPersonFromContainer(personEditContainer);
+            console.log(person);
             if (validatePerson(person)) {
                 runAjax("post", "/add_person", person, function(response) {
                     retrievePersonList();
                     console.log("Person added");
+                    if (onResponse)
+                        onResponse();
                 });
             }
         }
 
-        function sendUpdatePerson() {
-
+        function sendUpdatePerson(onResponse) {
+            let person = getPersonFromContainer(personEditContainer);
+            if (validatePerson(person)) {
+                runAjax("post", "/update_person", person, function(response) {
+                    let id = selectedPerson.data("id");
+                    selectPerson(null);
+                    retrievePersonList(function() {
+                        selectPerson(id);
+                        console.log("Person updated");
+                        if (onResponse)
+                            onResponse();
+                    });
+                });
+            }
         }
 
-        function sendRemovePerson(personId, onResponse) {
-            runAjax("post", "/remove_person", {"personId": personId}, function(response) {
-                onResponse();
+        function sendRemovePerson(onResponse) {
+            let person = getPersonFromContainer(personEditContainer);
+            runAjax("post", "/remove_person", {"personId": person["personId"]}, function(response) {
+                retrievePersonList();
+                selectPerson(null);
+                console.log("Person removed");
+                if (onResponse)
+                    onResponse();
             });
         }
     </script>
