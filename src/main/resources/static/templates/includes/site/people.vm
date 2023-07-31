@@ -27,6 +27,10 @@
     </div>
 
     <script>
-        let personRecordList = new RecordList("person", $("#people-container"));
+        let personRecordList = new RecordList("person", $("#people-container"), function(record) {
+            if (record["firstName"] === "")
+                return {success: false, reason: "First name must not be empty"};
+            return {success: true};
+        });
     </script>
 #end

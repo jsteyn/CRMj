@@ -11,10 +11,13 @@ class RecordList {
     listBegin = 0;
     listAmount = 10;
 
-    constructor(ajaxId, container) {
-        this.ajaxId = ajaxId;
+    validateRecordCallback;
 
+    constructor(ajaxId, container, validateRecordCallback) {
+        this.ajaxId = ajaxId;
         this.container = container;
+        this.validateRecordCallback = validateRecordCallback;
+
         this.recordListContainer = this.container.find(".record-list-container");
         this.recordEditContainer = this.container.find(".record-edit-container");
 
@@ -55,7 +58,6 @@ class RecordList {
         } else {
             this.selectedRecordElement.addClass("selected");
             let recordId = this.selectedRecordElement.data("id");
-            console.log(this.selectedRecordElement, recordId);
             this.retrieveRecord(recordId);
         }
     }
@@ -110,7 +112,6 @@ class RecordList {
         for (let record of response["records"]) {
             let element = $(`<p class="record-element" data-id="${record["recordId"]}">${record["display"]}</p>`);
             this.recordListContainer.append(element);
-            console.log(element);
             element.on("click", this.selectRecordFromList.bind(this, element));
         }
         if (onResponse)
@@ -120,8 +121,11 @@ class RecordList {
     sendAddRecord(onResponse) {
         let record = this.getRecordFromContainer();
 
-        // if (!this.validateRecord(record))
-        //     return;
+        let validate = this.validateRecordCallback(record);
+        if (!validate.success) {
+            alert(`Record Invalid. Reason:\n${validate.reason}`);
+            return;
+        }
 
         runAjax(
             "post",
@@ -139,8 +143,11 @@ class RecordList {
     sendUpdateRecord(onResponse) {
         let record = this.getRecordFromContainer();
 
-        // if (!this.validateRecord(record))
-        //     return;
+        let validate = this.validateRecordCallback(record);
+        if (!validate.success) {
+            alert(`Record Invalid. Reason:\n${validate.reason}`);
+            return;
+        }
 
         runAjax(
             "post",
