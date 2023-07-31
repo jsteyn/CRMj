@@ -1,3 +1,5 @@
+#parse("/static/templates/includes/common/record-list.vm")
+
 #macro(people_content)
     <link rel="stylesheet" href="/css/people.css">
     <h3>People</h3>
@@ -6,25 +8,16 @@
         <button onclick="personRecordList.deselectRecord();">Add New Person</button>
     </div>
 
-    <div id="people-container" class="record-container">
-        <div class="record-list-container">
-
-        </div>
-        <div class="record-edit-container">
-            <h2></h2>
-
-            <div class="edit-container-table">
-                <label>First Name:</label><input class="property-firstName" type="text" value="" />
-                <label>Middle Names:</label><input class="property-middleNames" type="text" value="" />
-                <label>Last Name:</label><input class="property-lastName" type="text" value="" />
-                <label>Title:</label><input class="property-title" type="text" value="" />
-
-                <button class="btn-update" onclick="personRecordList.sendUpdateRecord();">Update</button>
-                <button class="btn-remove" onclick="personRecordList.sendRemoveRecord();">Delete</button>
-                <button class="btn-add" onclick="personRecordList.sendAddRecord();">Add New</button>
-            </div>
-        </div>
-    </div>
+    #record_list(
+        "people-container"
+        "personRecordList"
+        [
+            {"display": "First Name:", "label": "firstName", "type": "text"},
+            {"display": "Middle Names:", "label": "middleNames", "type": "text"},
+            {"display": "First Name:", "label": "lastName", "type": "text"},
+            {"display": "Title:", "label": "title", "type": "text"}
+        ]
+    )
 
     <script>
         let personRecordList = new RecordList("person", $("#people-container"), function(record) {
