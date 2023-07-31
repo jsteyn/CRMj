@@ -1,3 +1,26 @@
+#**
+ * Create a tab list which allows for dynamic switching between content blocks (defined in tabs).
+ * <br>
+ * <br>
+ * <strong>Params:</strong>
+ * <ul style="list-style: none">
+ *     <li>
+ *         <strong>tabs [list[object]] - </strong>List of tab information in the following format:
+ *         <ul style="list-style: none">
+ *             <li>
+ *                 <strong>id [text] - </strong>Unique DOM id for the tab. Used in content containers (as tab.id) and in tab
+ *                 buttons (as "tab.id"-button).
+ *             </li>
+ *             <li>
+ *                 <strong>name [text] - </strong>Display text for the tab.
+ *             </li>
+ *             <li>
+ *                 <strong>content [html] - </strong>Contents of the tab container.
+ *             </li>
+ *         </ul>
+ *     </li>
+ * </ul>
+ *#
 #macro(tablist $tabs)
     <div class="tab">
         #foreach($tab in $tabs)

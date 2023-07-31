@@ -1,5 +1,8 @@
 #parse("/static/templates/includes/common/record-list.vm")
 
+#**
+ * Contents of the people tab. Displays list of records from the people table and their corresponding attributes.
+ *#
 #macro(people_content)
     <link rel="stylesheet" href="/css/people.css">
     <h3>People</h3>

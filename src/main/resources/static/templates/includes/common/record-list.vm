@@ -1,3 +1,27 @@
+#**
+ * Create DOM structure for a record list. Displays a list of records with the ability to select and modify each record,
+ * or add new records.
+ * <br>
+ * <br>
+ * <strong>Params:</strong>
+ * <ul style="list-style: none">
+ *     <li>
+ *         <strong>name [text] - </strong>DOM id for the base container of this structure.
+ *     </li>
+ *     <li>
+ *         <strong>recordList [RecordList] - </strong>JS variable name of the RecordList instance linked to this
+ *         structure.
+ *     </li>
+ *     <li>
+ *         <strong>properties [list[object]] - </strong>List of properties for the record in the following format:
+ *         <ul style="list-style: none">
+ *             <li><strong>display - </strong>Display text for the property.</li>
+ *             <li><strong>label - </strong>Unique identifier for the property (must match server-side expectations).</li>
+ *             <li><strong>type - </strong>Value type (html input type)</li>
+ *         </ul>
+ *     </li>
+ * </ul>
+ *#
 #macro(record_list $name $recordList $properties)
     <div id="${name}" class="record-container">
         <div class="record-list-container">
