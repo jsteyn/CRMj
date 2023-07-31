@@ -77,6 +77,7 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
 
     public void setDatabasePath(@NotNull Path path) {
         m_databasePath = path;
+        m_isDirty = true;
     }
 
     public String getDatabaseProtocol() {
@@ -85,6 +86,7 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
 
     public void setDatabaseProtocol(@NotNull String protocol) {
         m_databaseProtocol = protocol;
+        m_isDirty = true;
     }
 
     public String getDatabaseDialect() {
@@ -93,6 +95,7 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
 
     public void setDatabaseDialect(@NotNull String protocol) {
         m_databaseDialect = protocol;
+        m_isDirty = true;
     }
 
     public String getFullDatabaseUrl() {
