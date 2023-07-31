@@ -1,7 +1,7 @@
 /**
  * @typedef {Object} ValidationResult
  * @property {boolean} success true if record is valid, otherwise false.
- * @property {?string} reason   Why the record is invalid, if applicable. Optional if success is false.
+ * @property {?string} reason   Why the record is invalid, if applicable. Optional if success is true.
  */
 
 /**
