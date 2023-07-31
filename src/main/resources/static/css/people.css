@@ -5,12 +5,12 @@
     --selector-color-selected: darkmagenta;
 }
 
-#people-container {
+.record-container {
     display: flex;
     width: 100%;
 }
 
-#people-list-container {
+.record-list-container {
     flex: 1;
     padding: 4px;
     margin-right: 4px;
@@ -18,7 +18,7 @@
     border: 2px solid var(--container-border-color);
 }
 
-#people-list-container p {
+.record-list-container p {
     font-size: large;
     font-weight: bold;
     cursor: pointer;
@@ -26,11 +26,11 @@
     color: var(--selector-color-unselected);
 }
 
-#people-list-container p.selected {
+.record-list-container p.selected {
     color: var(--selector-color-selected);
 }
 
-#person-edit-container {
+.record-edit-container {
     flex: 1;
 
     border: 2px solid var(--container-border-color);

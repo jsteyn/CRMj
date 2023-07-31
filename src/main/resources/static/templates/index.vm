@@ -1,6 +1,8 @@
 #parse("/static/templates/includes/site/people.vm")
 #parse("/static/templates/includes/site/dummy-tab.vm")
 
+<script src="/js/record-list.js"></script>
+
 #set($title = "CRMj")
 #macro(content)
     #tablist([

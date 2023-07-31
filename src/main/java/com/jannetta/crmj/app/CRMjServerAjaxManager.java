@@ -51,7 +51,7 @@ public class CRMjServerAjaxManager {
 
     private @NotNull JsonObject getPerson(@NotNull Request request, @NotNull Response response) {
         JsonObject parameters = JsonParser.parseString(request.body()).getAsJsonObject();
-        int personId = parameters.get("personId").getAsInt();
+        int personId = parameters.get("recordId").getAsInt();
 
         Person person;
         JsonObject output = new JsonObject();
@@ -60,9 +60,9 @@ public class CRMjServerAjaxManager {
             HashMap<String, Object> queryParams = new HashMap<>();
             queryParams.put("id", personId);
             person = m_databaseManager.readFrom(Person.class, "m_id = :id", queryParams).get(0);
-
-            output.add("person", new Gson().toJsonTree(person));
+            output.add("record", new Gson().toJsonTree(person));
         }
+        output.addProperty("recordId", personId);
 
         return output;
     }
@@ -85,23 +85,24 @@ public class CRMjServerAjaxManager {
         JsonArray personList = new JsonArray();
         for (Object[] record : personListRaw) {
             JsonObject personData = new JsonObject();
-            personData.addProperty("personId", (Integer) record[0]);
-            personData.addProperty("firstName", (String) record[1]);
-            personData.addProperty("lastName", (String) record[2]);
+            personData.addProperty("recordId", (Integer) record[0]);
+            personData.addProperty("display", String.format("%s %s", record[1], record[2]));
             personList.add(personData);
         }
 
         JsonObject output = new JsonObject();
-        output.add("people", personList);
+        output.add("records", personList);
 
         return output;
     }
 
     private JsonObject addPerson(@NotNull Request request, @NotNull Response response) {
-        Person person = new Gson().fromJson(request.body(), Person.class);
+        JsonObject parameters = JsonParser.parseString(request.body()).getAsJsonObject();
+        Person person = new Gson().fromJson(parameters.get("record"), Person.class);
 
         try (m_databaseManager) {
             m_databaseManager.open();
+
             m_databaseManager.create(person);
         }
 
@@ -109,12 +110,15 @@ public class CRMjServerAjaxManager {
     }
 
     private JsonObject updatePerson(@NotNull Request request, @NotNull Response response) {
-        Person person = new Gson().fromJson(request.body(), Person.class);
+        JsonObject parameters = JsonParser.parseString(request.body()).getAsJsonObject();
+        int personId = parameters.get("recordId").getAsInt();
+        Person person = new Gson().fromJson(parameters.get("record"), Person.class);
 
         try (m_databaseManager) {
             m_databaseManager.open();
+
             HashMap<String, Object> queryParams = new HashMap<>();
-            queryParams.put("id", person.getId());
+            queryParams.put("id", personId);
             Person existing = m_databaseManager.readFrom(Person.class, "m_id = :id", queryParams).get(0);
             existing.setFirstName(person.getFirstName());
             existing.setMiddleNames(person.getMiddleNames());
@@ -128,7 +132,7 @@ public class CRMjServerAjaxManager {
 
     private JsonObject removePerson(@NotNull Request request, @NotNull Response response) {
         JsonObject parameters = JsonParser.parseString(request.body()).getAsJsonObject();
-        int id = parameters.get("personId").getAsInt();
+        int id = parameters.get("recordId").getAsInt();
 
         try (m_databaseManager) {
             m_databaseManager.open();
