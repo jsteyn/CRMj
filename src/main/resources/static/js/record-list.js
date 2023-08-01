@@ -166,7 +166,7 @@ class RecordList {
      * [add mode]{@link this.setAddMode}.
      * @param {?jQuery} recordElement Record list element to select.
      */
-    selectRecordFromList(recordElement) {
+    selectRecordFromList(recordElement = null) {
         if (this.selectedRecordElement !== null) {
             this.selectedRecordElement.removeClass("selected");
             // Toggle the element if already selected
@@ -222,10 +222,10 @@ class RecordList {
      * The [edit container]{@link this.recordEditContainer} will be set to [edit mode]{@link this.setEditMode} for the
      * retrieved record on success. Does nothing on failure.
      * @param {number|string} recordId Unique id of the record to be queried for.
-     * @param {function} onResponse Callback to be executed after a successful response is received and the container is
+     * @param {?function} onResponse Callback to be executed after a successful response is received and the container is
      * updated.
      */
-    retrieveRecord(recordId, onResponse) {
+    retrieveRecord(recordId, onResponse = null) {
         runAjax(
             "post",
             `/get_${this.ajaxId}`,
@@ -247,10 +247,10 @@ class RecordList {
      * Retrieve a list of records within bounds of [RecordList::listBegin]{@link this.listBegin} and
      * [RecordList::listAmount]{@link this.listAmount} through ajax request and repopulate the
      * [record list]{@link this.recordListContainer} with the results on success. Does nothing on failure.
-     * @param {function} onResponse Callback to be executed after a successful response is received and the container is
+     * @param {?function} onResponse Callback to be executed after a successful response is received and the container is
      * updated.
      */
-    retrieveRecordList(onResponse) {
+    retrieveRecordList(onResponse = null) {
         runAjax(
             "post",
             `/get_${this.ajaxId}_list_ranged`,
@@ -278,10 +278,10 @@ class RecordList {
      * Send the current contents of the [edit container]{@link this.recordEditContainer} to be added to the database
      * through ajax request. Will set the [edit container]{@link this.recordEditContainer} to
      * [add mode]{@link this.setAddMode} on success. Does nothing on failure.
-     * @param {function} onResponse Callback to be executed after a successful response is received and the container is
+     * @param {?function} onResponse Callback to be executed after a successful response is received and the container is
      * updated.
      */
-    sendAddRecord(onResponse) {
+    sendAddRecord(onResponse = null) {
         let record = this.getRecordFromContainer();
 
         let validate = this.validateRecordCallback(record);
@@ -310,10 +310,10 @@ class RecordList {
      * Send the current contents of the [edit container]{@link this.recordEditContainer} to update the currently
      * selected record in the database through ajax request. Will update the
      * [record list]{@link this.recordListContainer} and reselect the record on success. Does nothing on failure.
-     * @param {function} onResponse Callback to be executed after a successful response is received and the container is
+     * @param {?function} onResponse Callback to be executed after a successful response is received and the container is
      * updated.
      */
-    sendUpdateRecord(onResponse) {
+    sendUpdateRecord(onResponse = null) {
         let record = this.getRecordFromContainer();
 
         let validate = this.validateRecordCallback(record);
@@ -347,10 +347,10 @@ class RecordList {
      * Delete the database record matching the currently selected record through ajax request and set the
      * [edit container]{@link this.recordEditContainer} to [add mode]{@link this.setAddMode} on success. Does nothing
      * on failure.
-     * @param onResponse Callback to be executed after a successful response is received and the container is
+     * @param {?function} onResponse Callback to be executed after a successful response is received and the container is
      * updated.
      */
-    sendRemoveRecord(onResponse) {
+    sendRemoveRecord(onResponse = null) {
         if (!confirm("Warning! This action cannot be undone. Continue anyway?"))
             return;
         let recordId = this.selectedRecordElement.data("id");
