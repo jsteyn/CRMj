@@ -17,6 +17,9 @@ import spark.Spark;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Composite class of the {@link CRMjServerManager}, for managing ajax-specific operations and routes.
+ */
 public class CRMjServerAjaxManager {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(CRMjServerAjaxManager.class);
 
@@ -26,6 +29,9 @@ public class CRMjServerAjaxManager {
         m_databaseManager = databaseManager;
     }
 
+    /**
+     * Map all ajax operations to their corresponding url.
+     */
     public void mapRoutes() {
         Spark.post("/get_person", wrapAjax(this::getPerson));
         Spark.post("/get_person_list_ranged", wrapAjax(this::getPersonListRanged));
@@ -34,6 +40,18 @@ public class CRMjServerAjaxManager {
         Spark.post("/remove_person", wrapAjax(this::removePerson));
     }
 
+    /**
+     * Wrapper method for all ajax calls to enforce a specific response format.
+     * <br>
+     * Responses will always return a JsonObject with the {@code "success"} property, which is set to true unless an
+     * error occurs. Should an error be caught, the {@code "success"} property will be set to false, an
+     * {@code "error"} property will be added containing the exception message, and an error will be logged.
+     * <br>
+     * Note: the {@code "success"} property only dictates whether an error has occurred. It is up to the provided
+     * {@code route} to handle any state information, or to throw its own exceptions when applicable.
+     * @param route Main ajax operation. Is assumed to return JsonObject.
+     * @return {@link Route} which wraps around the provided route to apply functionality common to all ajax calls.
+     */
     private Route wrapAjax(Route route) {
         return (request, response) -> {
             try {
@@ -44,7 +62,10 @@ public class CRMjServerAjaxManager {
                 return output;
             } catch (Exception e) {
                 s_LOGGER.error("Error running ajax operation", e);
-                return generateErrorReturn(e.getMessage());
+                JsonObject output = new JsonObject();
+                output.addProperty("success", false);
+                output.addProperty("error", e.getMessage());
+                return output.toString();
             }
         };
     }
@@ -143,12 +164,5 @@ public class CRMjServerAjaxManager {
         }
 
         return new JsonObject();
-    }
-
-    private String generateErrorReturn(String message) {
-        JsonObject output = new JsonObject();
-        output.addProperty("success", false);
-        output.addProperty("error", message);
-        return output.toString();
     }
 }

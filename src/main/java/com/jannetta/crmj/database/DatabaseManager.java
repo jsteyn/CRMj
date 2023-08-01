@@ -32,7 +32,7 @@ public class DatabaseManager implements Closeable {
         settings.put("hibernate.connection.driver_class", m_properties.getDatabaseDriver());
         settings.put("hibernate.connection.url", m_properties.getFullDatabaseUrl());
         settings.put("hibernate.dialect", m_properties.getDatabaseDialect());
-        settings.put("hibernate.hbm2ddl.auto", "update");
+        settings.put("hibernate.hbm2ddl.auto", "update"); // Normally update, may want create-drop
         settings.put("hibernate.show_sql", "true");
 
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder().applySettings(settings).build();

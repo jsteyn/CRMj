@@ -7,6 +7,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+/**
+ * Top-level handler class for constructing managers and handing out references.
+ * <br>
+ * Can be used as a toolbox to retrieve managers on demand, though this should generally be avoided (access to a manager
+ * should only be provided to classes that need it, and through an interface limiting what can be viewed where
+ * applicable).
+ */
 public class Root {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(Root.class);
     private final CRMjPropertiesManager m_propertiesManager;

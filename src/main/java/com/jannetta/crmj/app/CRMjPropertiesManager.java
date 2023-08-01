@@ -12,6 +12,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+/**
+ * Properties Manager implementation class for handling and serializing configurable properties.
+ */
 public class CRMjPropertiesManager implements DatabaseProperties, ServerProperties {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(CRMjPropertiesManager.class);
     private static final Path s_CONFIG_DIRECTORY = Paths.get(System.getProperty("user.home"), ".CRMj");
@@ -31,8 +34,14 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
 
     private boolean m_isDirty = false;
 
+    /**
+     * Create a new {@link CRMjPropertiesManager}, and load any existing properties from the
+     * {@link CRMjPropertiesManager#s_PROPERTIES_FILEPATH properties file}. If no such file exists, it will be created
+     * and written to.
+     * @throws IOException If an I/O error occurs.
+     */
     public CRMjPropertiesManager() throws IOException {
-        s_LOGGER.info("Loading properties from: [{}]", s_PROPERTIES_FILEPATH.toString());
+        s_LOGGER.info("Loading properties from: [{}]", s_PROPERTIES_FILEPATH);
         if (Files.exists(s_PROPERTIES_FILEPATH)) {
             loadPropertiesFromFile();
         } else {
@@ -41,11 +50,31 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
         }
     }
 
+    /**
+     * Write all properties to the {@link CRMjPropertiesManager#s_PROPERTIES_FILEPATH properties file} or log an error
+     * on failure to write.
+     * <br>
+     * This operation will mark the manager as {@link CRMjPropertiesManager#isDirty() clean} on success.
+     */
     public void save() {
         try {
             savePropertiesToFile();
         } catch (IOException e) {
-            s_LOGGER.error("Error writing properties: ".concat(e.getMessage()));
+            s_LOGGER.error("Error writing properties:", e);
+        }
+    }
+
+    /**
+     * Read all properties from the {@link CRMjPropertiesManager#s_PROPERTIES_FILEPATH properties file} or log an error
+     * on failure to read.
+     * <br>
+     * This operation will mark the manager as {@link CRMjPropertiesManager#isDirty() clean} on success.
+     */
+    public void load() {
+        try {
+            loadPropertiesFromFile();
+        } catch (IOException e) {
+            s_LOGGER.error("Error reading properties:", e);
         }
     }
 
@@ -118,9 +147,9 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
 
         Properties properties = new Properties();
 
-        FileInputStream stream = new FileInputStream(s_PROPERTIES_FILEPATH.toFile());
-        properties.load(stream);
-        stream.close();
+        try (FileInputStream stream = new FileInputStream(s_PROPERTIES_FILEPATH.toFile())) {
+            properties.load(stream);
+        }
 
         // Server
         m_port = readIntProperty(properties, m_portPropID, m_port);
@@ -156,6 +185,16 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
         m_isDirty = false;
     }
 
+    /**
+     * Performs the {@link CRMjPropertiesManager#readStringProperty(Properties, String, String)} operation and returns
+     * the resultant property cast to an integer.
+     * <br>
+     * If the property exists but cannot be cast to an integer, the default value will be returned and an error will be
+     * logged.
+     * @see CRMjPropertiesManager#readStringProperty(Properties, String, String)
+     * @return Property from {@code properties} with a key matching {@code propertyID}, or {@code defaultValue} if no
+     * such property is found or if it cannot be cast to an integer.
+     */
     private int readIntProperty(@NotNull Properties properties, @NotNull String propertyID, int defaultValue) {
         String rawValue = readStringProperty(properties, propertyID, null);
         if (rawValue == null) {
@@ -173,6 +212,17 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
             return defaultValue;
         }
     }
+
+    /**
+     * Performs the {@link CRMjPropertiesManager#readStringProperty(Properties, String, String)} operation and returns
+     * the resultant property cast to a float.
+     * <br>
+     * If the property exists but cannot be cast to a float, the default value will be returned and an error will be
+     * logged.
+     * @see CRMjPropertiesManager#readStringProperty(Properties, String, String)
+     * @return Property from {@code properties} with a key matching {@code propertyID}, or {@code defaultValue} if no
+     * such property is found or if it cannot be cast to a float.
+     */
     private float readFloatProperty(@NotNull Properties properties, @NotNull String propertyID, float defaultValue) {
         String rawValue = readStringProperty(properties, propertyID, null);
         if (rawValue == null) {
@@ -190,10 +240,22 @@ public class CRMjPropertiesManager implements DatabaseProperties, ServerProperti
             return defaultValue;
         }
     }
+
+    /**
+     * Read property in {@code properties} matching {@code propertyId} as a {@code String}.
+     * <br>
+     * If the property is missing or unable to be read, {@code defaultValue} will be returned and a warning will be
+     * logged.
+     * @param properties Property handler to be read from.
+     * @param propertyID Key of the property to read.
+     * @param defaultValue Value to return if no property is found.
+     * @return Property from {@code properties} with a key matching {@code propertyID}, or {@code defaultValue} if no
+     * such property is found.
+     */
     private String readStringProperty(@NotNull Properties properties, @NotNull String propertyID, String defaultValue){
         String value = properties.getProperty(propertyID);
         if (value == null) {
-            s_LOGGER.error(String.format(
+            s_LOGGER.warn(String.format(
                 "Error reading property [%s]. Property not found. Using default value of: %s",
                 propertyID, defaultValue
             ));

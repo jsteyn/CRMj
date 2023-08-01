@@ -8,6 +8,9 @@ import org.slf4j.LoggerFactory;
 import spark.Spark;
 import spark.template.velocity.VelocityTemplateEngine;
 
+/**
+ * Server Manager implementation class for handling server initialization and route management.
+ */
 public class CRMjServerManager {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(CRMjServerManager.class);
 
@@ -17,8 +20,11 @@ public class CRMjServerManager {
     private final CRMjServerTemplateManager m_templateManager;
     private final CRMjServerAjaxManager m_ajaxManager;
 
-    private final VelocityTemplateEngine m_engine;
-
+    /**
+     * Create a new {@link CRMjServerManager} and initialize the server.
+     * @param properties Properties manager containing server configuration properties.
+     * @param databaseManager Database manager with read/write access.
+     */
     public CRMjServerManager(@NotNull ServerProperties properties, @NotNull DatabaseManager databaseManager) {
         m_properties = properties;
         m_databaseManager = databaseManager;
@@ -26,10 +32,8 @@ public class CRMjServerManager {
         m_templateManager = new CRMjServerTemplateManager();
         m_ajaxManager = new CRMjServerAjaxManager(m_databaseManager);
 
-        m_engine = new VelocityTemplateEngine();
-
         configureServer();
-        m_templateManager.mapRoutes(m_engine);
+        m_templateManager.mapRoutes();
         m_ajaxManager.mapRoutes();
 
         Spark.awaitInitialization();
