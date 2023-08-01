@@ -11,3 +11,5 @@
     ])
 #end
 #parse("/static/templates/layouts/default.vm")
+
+<script src="/js/tabs.js"></script>
