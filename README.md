@@ -5,21 +5,16 @@ I have been browsing to find a CRM that suits my needs. I found that I could eit
 
 ## Requirements
 ### Non functional requirements
-- [ ] To be written in **Java**
-- [ ] We'll be using **IntelliJ** so the directory structure will reflect that.
-- [ ] We'll be using **Maven**
-- [ ] To use **SparkJava** with **Jetty**
+- [x] To be written in **Java**
+- [x] We'll be using **IntelliJ** so the directory structure will reflect that.
+- [x] We'll be using **Maven**
+- [x] To use **SparkJava** with **Jetty**
   - [ ] [https://sparkjava.com/tutorials/jetty-request-log](https://sparkjava.com/tutorials/jetty-request-log)
-  - [ ] [https://sparkjava.com/tutorials/application-structure](https://sparkjava.com/tutorials/application-structure)
-- [ ] To use **SQLite** for a database
-- [ ] A REST service
-- [ ] A Browser user interface
-- [ ] To run, like [OpenRefine](https://openrefine.org/) as a web service but on your local machine so that you do not require Internet activity and you do not have to consider all the security implications of running on public servers.
-   
-### Considerations for later
-1. To add an alternative Swing (or something) desktop user interface
-2. To add security via login for multi-user
-3. To make provision for other databases. The design will use DAO to provide for this from the beginning.
+  - [x] [https://sparkjava.com/tutorials/application-structure](https://sparkjava.com/tutorials/application-structure)
+- [x] To use **SQLite** for a database
+- [x] A REST service
+- [x] A Browser user interface
+- [x] To run, like [OpenRefine](https://openrefine.org/) as a web service but on your local machine so that you do not require Internet activity and you do not have to consider all the security implications of running on public servers.
 
 ### Functional Requirements
 #### Contacts
@@ -32,7 +27,7 @@ I have been browsing to find a CRM that suits my needs. I found that I could eit
   - [ ] personal
   - [ ] colleague
   - [ ] ...
-     
+
 #### Interactions
 - [ ] The user will have interactions with contacts. These interactions are of enumeration type interaction_type:
   - [ ] phone
@@ -48,18 +43,38 @@ I have been browsing to find a CRM that suits my needs. I found that I could eit
   - [ ] Interaction types
   - [ ] Social media types
 
-#### Conventions
+### Considerations for later
+1. To add an alternative Swing (or something) desktop user interface
+2. To add security via login for multi-user
+3. To make provision for other databases. The design will use DAO to provide for this from the beginning.
 
-- [Hungarian notation](https://en.wikipedia.org/wiki/Hungarian_notation#Examples)
-- Private member
-  - Default - m_camelCase
-  - Static - s_camelCase
-  - Constant - m_UPPER_CASE
-  - Static constant - s_UPPER_CASE
-- Public member
-  - Default - camelCase
-  - Constant - UPPER_CASE
-- Avoid public members where possible (prefer getters/setters)
-- Prefer Path over File and File over String
-- Single instance classes (like CRMjServer/CRMjProperties) should always be final (to avoid accidental overwrites of references)
+### Conventions
 
+- **Server (Java)**
+  - [Hungarian notation](https://en.wikipedia.org/wiki/Hungarian_notation#Examples)
+  - Private member
+    - Default - m_camelCase
+    - Static - s_camelCase
+    - Constant - m_UPPER_CASE
+    - Static constant - s_UPPER_CASE
+  - Public member
+    - Default - camelCase
+    - Constant - UPPER_CASE
+  - Avoid public members where possible (prefer getters/setters)
+  - Prefer Path over File, and File over String
+  - Single instance classes (like CRMjServer/CRMjProperties) should always be final (to avoid accidental overwrites of references)
+  - Composite classes (like CRMjServerAjaxManager is to CRMjServerManager) should be notated as such in their documentation
+- **Client (velocity/html/css/js)**
+  - All template (and related) files are to be placed in the resources/static/ directory
+  - Main page templates (such as index or login) are to be placed directly in the resources/static/templates/ directory
+  - Page layouts are to be found in the resources/static/templates/layouts/ directory
+    - Any html and includes (potentially) common to multiple main pages should be made into a layout
+    - See index.vm and layouts/default.vm for an example on how to implement layouts with parameters
+  - Includes are to be found in the resources/static/templates/includes/ directory
+    - Site-includes can be considered composite structures, used to prevent bloating the main template with too much information
+    - Common-includes are included on an as-needed basis wherever they are required
+      - These should rely entirely on macros to avoid repetition of DOM structures
+  - JavaScript files are to be found in the resources/static/js/ directory
+    - These files should generally comprise of common or generified structures and functions
+    - Global variables should not be defined within these files to allow multiple uses in a single template
+      - Where some form of global data is required consider using a class instead
