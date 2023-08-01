@@ -1,15 +1,20 @@
+#parse("/static/templates/includes/common/tab-list.vm")
+
 #parse("/static/templates/includes/site/people.vm")
 #parse("/static/templates/includes/site/dummy-tab.vm")
 
 <script src="/js/record-list.js"></script>
+<script src="/js/tab-list.js"></script>
 
 #set($title = "CRMj")
 #macro(content)
-    #tablist([
+    #tablist("table-tab-list", [
         {"id": "content-people", "name": "People", "content": "#people_content()"},
         {"id": "content-dummy",    "name": "Dummy",    "content": "#dummy_content()"}
     ])
+
+    <script>
+        let tableTabList = new TabList("TableList", $("#table-tab-list"))
+    </script>
 #end
 #parse("/static/templates/layouts/default.vm")
-
-<script src="/js/tabs.js"></script>

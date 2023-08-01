@@ -21,17 +21,19 @@
  *     </li>
  * </ul>
  *#
-#macro(tablist $tabs)
-    <div class="tab">
-        #foreach($tab in $tabs)
-            <button id="${tab.id}-button" data-target="$tab.id">$tab.name</button>
-        #end
-    </div>
-    <div class="tab-content-container">
-        #foreach($tab in $tabs)
-            <div id="$tab.id" class="tab-content">
-                $tab.content
-            </div>
-        #end
+#macro(tablist $name $tabs)
+    <div id="${name}" class="tab-list-container">
+        <div class="tab-list">
+            #foreach($tab in $tabs)
+                <button id="${tab.id}-button" data-target="$tab.id">$tab.name</button>
+            #end
+        </div>
+        <div class="tab-content-container">
+            #foreach($tab in $tabs)
+                <div id="$tab.id" class="tab-content">
+                    $tab.content
+                </div>
+            #end
+        </div>
     </div>
 #end

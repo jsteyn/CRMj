@@ -7,37 +7,7 @@
 /**
  * Handler class for managing lists of records.
  * <br>
- * This class is to be paired with the DOM structure shown below.
- * <ul>
- *     <li>RECORD CONTAINER - Unique identifier for this container.</li>
- *     <li>DISPLAY NAME - Name of the property, as should be shown to the viewer.</li>
- *     <li>PROPERTY ID - Unique identifier for this property. Must match what the server expects this property to be
- *     called</li>
- *     <li>RECORD LIST - Name of the variable holding this class.</li>
- *     <li>PARAMS - See [RecordList::constructor]{@link RecordList.constructor}</li>
- * </ul>
- * @example
- * <div id="#RECORD CONTAINER#" class="record-container">
- *     <div class="record-list-container">
- *
- *     </div>
- *     <div class="record-edit-container">
- *         <h2></h2>
- *
- *         <div class="edit-container-table">
- *             <label>#DISPLAY NAME#:</label><input class="property-#PROPERTY ID#" type="text" value="" />
- *             #Repeat above line for every property...#
- *
- *             <button class="btn-update" onclick="#RECORD LIST#.sendUpdateRecord();">Update</button>
- *             <button class="btn-remove" onclick="#RECORD LIST#.sendRemoveRecord();">Delete</button>
- *             <button class="btn-add" onclick="#RECORD LIST#.sendAddRecord();">Add New</button>
- *         </div>
- *     </div>
- * </div>
- *
- * <script>
- *     let #RECORD LIST# = new RecordList(#PARAMS#);
- * </script>
+ * This class is to be paired with the DOM structure defined in includes/common/record-list.vm
  */
 class RecordList {
     /**
