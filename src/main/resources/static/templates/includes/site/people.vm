@@ -8,6 +8,8 @@
     <h3>People</h3>
     <div>
         <button onclick="personRecordList.retrieveRecordList();">Refresh</button>
+        <button onclick="personRecordList.retrieveRecordList(1);">1</button>
+        <button onclick="personRecordList.retrieveRecordList(11);">11</button>
         <button onclick="personRecordList.deselectRecord();">Add New Person</button>
     </div>
 
@@ -15,10 +17,13 @@
         "people-container"
         "personRecordList"
         [
+            {"display": "Nickname:", "label": "nickName", "type": "text"},
             {"display": "First Name:", "label": "firstName", "type": "text"},
             {"display": "Middle Names:", "label": "middleNames", "type": "text"},
-            {"display": "First Name:", "label": "lastName", "type": "text"},
-            {"display": "Title:", "label": "title", "type": "text"}
+            {"display": "Last Name:", "label": "lastName", "type": "text"},
+            {"display": "Married Name:", "label": "marriedName", "type": "text"},
+            {"display": "Title:", "label": "title", "type": "text"},
+            {"display": "Birthday:", "label": "dateOfBirth", "type": "date"}
         ]
     )
 
@@ -27,6 +32,10 @@
             if (record["firstName"] === "")
                 return {success: false, reason: "First name must not be empty"};
             return {success: true};
+        });
+        $().on("change", function() {
+            alert("what??");
+            $(this)
         });
     </script>
 #end

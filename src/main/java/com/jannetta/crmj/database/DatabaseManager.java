@@ -1,5 +1,7 @@
 package com.jannetta.crmj.database;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
@@ -19,12 +21,16 @@ import java.util.Map;
 public class DatabaseManager implements Closeable {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(DatabaseManager.class);
 
+    private final GsonBuilder m_gsonBuilder;
+
     private final DatabaseProperties m_properties;
     private final SessionFactory m_sessionFactory;
     private Session m_session = null;
 
     public DatabaseManager(@NotNull DatabaseProperties properties, @NotNull Class<?>[] entities) {
         m_properties = properties;
+
+        m_gsonBuilder = new GsonBuilder().serializeNulls().setDateFormat("yyyy-MM-dd");
 
         s_LOGGER.info("Loading database at: [{}]", m_properties.getFullDatabaseUrl());
 
@@ -60,6 +66,10 @@ public class DatabaseManager implements Closeable {
         m_session.getTransaction().commit();
         m_session.close();
         m_session = null;
+    }
+
+    public Gson createGson() {
+        return m_gsonBuilder.create();
     }
 
     public <T> void create(@NotNull T object) {

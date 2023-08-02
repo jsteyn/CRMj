@@ -97,7 +97,7 @@ class RecordList {
         for (let property of this.recordEditContainer.find(`input[class*="property-"]`)) {
             let element = $(property);
             let propertyName = element.attr("class").match(/property-(.+)/)[1];
-            record[propertyName] = element.val();
+            record[propertyName] = element.val() === "" ? null : element.val();
         }
         return record;
     }

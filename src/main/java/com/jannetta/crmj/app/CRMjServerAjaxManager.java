@@ -1,9 +1,6 @@
 package com.jannetta.crmj.app;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.jannetta.crmj.database.DatabaseManager;
 import com.jannetta.crmj.database.model.Person;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +78,7 @@ public class CRMjServerAjaxManager {
             HashMap<String, Object> queryParams = new HashMap<>();
             queryParams.put("id", personId);
             person = m_databaseManager.readFrom(Person.class, "m_id = :id", queryParams).get(0);
-            output.add("record", new Gson().toJsonTree(person));
+            output.add("record", m_databaseManager.createGson().toJsonTree(person));
         }
         output.addProperty("recordId", personId);
 
@@ -98,8 +95,8 @@ public class CRMjServerAjaxManager {
             m_databaseManager.open();
             HashMap<String, Object> queryParams = new HashMap<>();
             personListRaw = m_databaseManager.readLimit(
-                "SELECT m_id, m_firstName, m_lastName " +
-                    "FROM Person",
+                "SELECT m_id, m_firstName, m_lastName, m_marriedName " +
+                    "FROM Person ORDER by m_lastName",
                 queryParams, amount, begin);
         }
 
@@ -107,7 +104,11 @@ public class CRMjServerAjaxManager {
         for (Object[] record : personListRaw) {
             JsonObject personData = new JsonObject();
             personData.addProperty("recordId", (Integer) record[0]);
-            personData.addProperty("display", String.format("%s %s", record[1], record[2]));
+            if (record[3] == null) {
+                personData.addProperty("display", String.format("%s, %s", record[2], record[1]));
+            } else {
+                personData.addProperty("display", String.format("%s, %s", record[3], record[1]));
+            }
             personList.add(personData);
         }
 
@@ -119,7 +120,7 @@ public class CRMjServerAjaxManager {
 
     private JsonObject addPerson(@NotNull Request request, @NotNull Response response) {
         JsonObject parameters = JsonParser.parseString(request.body()).getAsJsonObject();
-        Person person = new Gson().fromJson(parameters.get("record"), Person.class);
+        Person person = m_databaseManager.createGson().fromJson(parameters.get("record"), Person.class);
 
         try (m_databaseManager) {
             m_databaseManager.open();
@@ -133,7 +134,7 @@ public class CRMjServerAjaxManager {
     private JsonObject updatePerson(@NotNull Request request, @NotNull Response response) {
         JsonObject parameters = JsonParser.parseString(request.body()).getAsJsonObject();
         int personId = parameters.get("recordId").getAsInt();
-        Person person = new Gson().fromJson(parameters.get("record"), Person.class);
+        Person person = m_databaseManager.createGson().fromJson(parameters.get("record"), Person.class);
 
         try (m_databaseManager) {
             m_databaseManager.open();
@@ -145,6 +146,9 @@ public class CRMjServerAjaxManager {
             existing.setMiddleNames(person.getMiddleNames());
             existing.setLastName(person.getLastName());
             existing.setTitle(person.getTitle());
+            existing.setDateOfBirth(person.getDateOfBirth());
+            existing.setNickName(person.getNickName());
+            existing.setMarriedName(person.getMarriedName());
             m_databaseManager.update(existing);
         }
 

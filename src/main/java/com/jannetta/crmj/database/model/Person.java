@@ -3,6 +3,7 @@ package com.jannetta.crmj.database.model;
 import com.google.gson.annotations.SerializedName;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.Set;
 
 @Entity
@@ -26,6 +27,15 @@ public class Person {
     @SerializedName("title")
     @Column(name = "title", length = 50)
     private String m_title;
+    @SerializedName("dateOfBirth")
+    @Column(name = "date_of_birth")
+    private Date m_dateOfBirth;
+    @SerializedName("nickName")
+    @Column(name = "nick_name", length = 50)
+    private String m_nickName;
+    @SerializedName("MarriedName")
+    @Column(name = "married_name", length = 50)
+    private String m_marriedName;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "m_people")
     private Set<Address> m_addresses;
@@ -75,6 +85,31 @@ public class Person {
     public void setTitle(String title) {
         m_title = title;
     }
+
+    public Date getDateOfBirth() {
+        return m_dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        m_dateOfBirth = dateOfBirth;
+    }
+
+    public String getNickName() {
+        return m_nickName;
+    }
+
+    public void setNickName(String nickName) {
+        m_nickName = nickName;
+    }
+
+    public String getMarriedName() {
+        return m_marriedName;
+    }
+
+    public void setMarriedName(String MarriedName) {
+        m_marriedName = MarriedName;
+    }
+
 
     public Set<Address> getAddresses() {
         return m_addresses;
