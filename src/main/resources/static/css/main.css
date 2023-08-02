@@ -1,9 +1,5 @@
 :root {
     --header-border-color: cadetblue;
-
-    --tab-border-color: #cccccc;
-    --tab-bg-color: #f1f1f1;
-    --tab-btn-hover-color: #dddddd;
 }
 
 h1 a {
@@ -16,89 +12,6 @@ header {
 }
 footer {
     border-top: 2px dashed var(--header-border-color);
-}
-
-.tab-list {
-    overflow: hidden;
-
-    border-width: 1px 1px 10px 4px;
-    border-style: solid;
-    border-color: var(--tab-border-color);
-    background-color: var(--tab-bg-color);
-}
-
-.tab-list button {
-    float: left;
-    padding: 14px 16px;
-
-    border: none;
-    outline: none;
-    background-color: inherit;
-
-    cursor: pointer;
-    font-size: 17px;
-
-    transition: 0.3s;
-}
-
-.tab-list button:hover {
-    background-color: var(--tab-btn-hover-color);
-}
-
-.tab-list button.selected {
-    background-color: var(--tab-border-color);
-}
-
-.tab-content-container {
-    overflow: hidden;
-}
-
-.tab-content {
-    padding: 6px 12px;
-
-    border: 1px solid #ccc;
-}
-
-.record-container {
-    display: flex;
-    width: 100%;
-}
-
-.record-list-container {
-    flex: 1;
-    padding: 4px;
-    margin-right: 4px;
-
-    border: 2px solid var(--container-border-color);
-}
-
-.record-list-container p {
-    font-size: large;
-    font-weight: bold;
-    cursor: pointer;
-
-    color: var(--selector-color-unselected);
-}
-
-.record-list-container p.selected {
-    color: var(--selector-color-selected);
-}
-
-.record-edit-container {
-    flex: 1;
-
-    border: 2px solid var(--container-border-color);
-}
-
-.edit-container-table {
-    display: grid;
-    grid-template-columns: max-content max-content;
-    grid-gap: 5px;
-    padding: 4px;
-}
-
-.edit-container-table label {
-    text-align: right;
 }
 
 .btn {

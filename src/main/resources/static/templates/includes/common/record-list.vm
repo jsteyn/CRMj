@@ -42,3 +42,5 @@
         </div>
     </div>
 #end
+
+<link rel="stylesheet" href="/css/record-list.css">

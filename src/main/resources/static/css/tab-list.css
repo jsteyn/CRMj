@@ -1,0 +1,46 @@
+:root {
+    --tab-border-color: #cccccc;
+    --tab-bg-color: #f1f1f1;
+    --tab-btn-hover-color: #dddddd;
+}
+
+.tab-list {
+    overflow: hidden;
+
+    border-width: 1px 1px 10px 4px;
+    border-style: solid;
+    border-color: var(--tab-border-color);
+    background-color: var(--tab-bg-color);
+}
+
+.tab-list button {
+    float: left;
+    padding: 14px 16px;
+
+    border: none;
+    outline: none;
+    background-color: inherit;
+
+    cursor: pointer;
+    font-size: 17px;
+
+    transition: 0.3s;
+}
+
+.tab-list button:hover {
+    background-color: var(--tab-btn-hover-color);
+}
+
+.tab-list button.selected {
+    background-color: var(--tab-border-color);
+}
+
+.tab-content-container {
+    overflow: hidden;
+}
+
+.tab-content {
+    padding: 6px 12px;
+
+    border: 1px solid #ccc;
+}
