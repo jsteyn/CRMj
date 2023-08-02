@@ -59,6 +59,48 @@ footer {
     border: 1px solid #ccc;
 }
 
+.record-container {
+    display: flex;
+    width: 100%;
+}
+
+.record-list-container {
+    flex: 1;
+    padding: 4px;
+    margin-right: 4px;
+
+    border: 2px solid var(--container-border-color);
+}
+
+.record-list-container p {
+    font-size: large;
+    font-weight: bold;
+    cursor: pointer;
+
+    color: var(--selector-color-unselected);
+}
+
+.record-list-container p.selected {
+    color: var(--selector-color-selected);
+}
+
+.record-edit-container {
+    flex: 1;
+
+    border: 2px solid var(--container-border-color);
+}
+
+.edit-container-table {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    grid-gap: 5px;
+    padding: 4px;
+}
+
+.edit-container-table label {
+    text-align: right;
+}
+
 .btn {
 
 }
