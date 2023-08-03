@@ -94,6 +94,13 @@ public class DatabaseManager implements Closeable {
         return query.getResultList();
     }
 
+    public Object readSingle(@NotNull String rawQuery, Map<String, Object> parameters) {
+        Query<Object[]> query = m_session.createQuery(rawQuery, Object[].class);
+        if (parameters != null)
+            query.setProperties(parameters);
+        return query.getSingleResult();
+    }
+
     public List<Object[]> readLimit(@NotNull String rawQuery, Map<String, Object> parameters, int limit, int offset) {
         Query<Object[]> query = m_session.createQuery(rawQuery, Object[].class);
         query.setFirstResult(offset);

@@ -8,8 +8,6 @@
     <h3>People</h3>
     <div>
         <button onclick="personRecordList.retrieveRecordList();">Refresh</button>
-        <button onclick="personRecordList.retrieveRecordList(1);">1</button>
-        <button onclick="personRecordList.retrieveRecordList(11);">11</button>
         <button onclick="personRecordList.deselectRecord();">Add New Person</button>
     </div>
 

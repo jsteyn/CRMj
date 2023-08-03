@@ -1,0 +1,8 @@
+#macro(paginator $name)
+    <div id="${name}" class="paginator-container">
+        <button class="paginator-btn decrement">&lt;</button>
+        <button class="paginator-btn increment">&gt;</button>
+    </div>
+#end
+
+<link rel="stylesheet" href="/css/pagination.css">

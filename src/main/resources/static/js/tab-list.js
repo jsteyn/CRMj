@@ -72,7 +72,6 @@ class TabList {
      * @param {?jQuery} tab Button corresponding to the tab being selected.
      */
     selectTab(tab) {
-        console.log(tab);
         if (this.selectedTab !== null) {
             this.selectedTab.removeClass("selected");
             this.selectedTabContent.hide();

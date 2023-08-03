@@ -32,6 +32,7 @@ public class CRMjServerAjaxManager {
     public void mapRoutes() {
         Spark.post("/get_person", wrapAjax(this::getPerson));
         Spark.post("/get_person_list_ranged", wrapAjax(this::getPersonListRanged));
+        Spark.post("/get_person_count", wrapAjax(this::getPersonCount));
         Spark.post("/add_person", wrapAjax(this::addPerson));
         Spark.post("/update_person", wrapAjax(this::updatePerson));
         Spark.post("/remove_person", wrapAjax(this::removePerson));
@@ -115,6 +116,20 @@ public class CRMjServerAjaxManager {
         JsonObject output = new JsonObject();
         output.add("records", personList);
 
+        return output;
+    }
+
+    private JsonObject getPersonCount(@NotNull Request request, @NotNull Response response) {
+        long count = 0;
+        try (m_databaseManager) {
+            m_databaseManager.open();
+
+            HashMap<String, Object> queryParams = new HashMap<>();
+            count = (Long) m_databaseManager.readSingle("SELECT COUNT(*) FROM Person", queryParams);
+        }
+
+        JsonObject output = new JsonObject();
+        output.addProperty("count", count);
         return output;
     }
 

@@ -11,6 +11,12 @@
  */
 class RecordList {
     /**
+     * Paginator used to handle large sets of records.
+     * @var {Paginator}
+     */
+    paginator;
+
+    /**
      * Identifier for the record type for use in ajax requests.
      * @var {string} ajaxId
      */
@@ -43,6 +49,11 @@ class RecordList {
      */
     selectedRecordElement = null;
 
+    /**
+     * Number of records. See [RecordList::retrieveRecordCount]{@link this.retrieveRecordCount}
+     * @var {number} recordCount
+     */
+    recordCount = 0;
     /**
      * Index from which to begin the record-list, for when there are a large number of records.
      * @var {number} listBegin
@@ -84,8 +95,14 @@ class RecordList {
         this.recordListContainer = this.container.find(".record-list-container");
         this.recordEditContainer = this.container.find(".record-edit-container");
 
+        this.paginator = new Paginator(this.container.find(".paginator-container"), function(newIndex, oldIndex) {
+            this.listBegin = newIndex * this.listAmount;
+            this.retrieveRecordList();
+        }.bind(this), 5);
+
         this.deselectRecord();
         this.retrieveRecordList();
+        this.retrieveRecordCount();
     }
 
     /**
@@ -233,7 +250,7 @@ class RecordList {
      * Extension of [RecordList::retrieveRecordList]{@link this.retrieveRecordList}.
      */
     onRetrieveRecordList(onResponse, response) {
-        this.recordListContainer.empty();
+        this.recordListContainer.find("p").remove(".record-element");
 
         for (let record of response["records"]) {
             let element = $(`<p class="record-element" data-id="${record["recordId"]}">${record["display"]}</p>`);
@@ -242,6 +259,20 @@ class RecordList {
         }
         if (onResponse)
             onResponse(response);
+    }
+
+    retrieveRecordCount(onResponse) {
+        runAjax(
+            "post",
+            `/get_${this.ajaxId}_count`,
+            null,
+            this.onRetrieveRecordCount.bind(this, onResponse)
+        );
+    }
+
+    onRetrieveRecordCount(onResponse, response) {
+        this.recordCount = response["count"];
+        this.paginator.setNumPages(Math.ceil(this.recordCount / this.listAmount));
     }
 
     /**

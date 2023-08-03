@@ -10,7 +10,7 @@
     width: 100%;
 }
 
-.record-list-container {
+.record-list-manager {
     flex: 1;
     padding: 4px;
     margin-right: 4px;
@@ -18,7 +18,7 @@
     border: 2px solid var(--container-border-color);
 }
 
-.record-list-container p {
+.record-element {
     font-size: large;
     font-weight: bold;
     cursor: pointer;
@@ -26,8 +26,12 @@
     color: var(--selector-color-unselected);
 }
 
-.record-list-container p.selected {
+.record-element.selected {
     color: var(--selector-color-selected);
+}
+
+record-list-footer {
+
 }
 
 .record-edit-container {

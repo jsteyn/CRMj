@@ -26,3 +26,11 @@ function runAjax(type, url, data, onload, onerror) {
     xhttp.open(type, url, true);
     xhttp.send(JSON.stringify(data));
 }
+
+function mod(n, m) {
+    return ((n % m) + m) % m;
+}
+
+function clamp(n, min, max) {
+    return (n <= min) ? min : ((n >= max) ? max : n);
+}

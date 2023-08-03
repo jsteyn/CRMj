@@ -3,6 +3,7 @@
 #parse("/static/templates/includes/site/people.vm")
 #parse("/static/templates/includes/site/dummy-tab.vm")
 
+<script src="/js/pagination.js"></script>
 <script src="/js/record-list.js"></script>
 <script src="/js/tab-list.js"></script>
 
