@@ -82,7 +82,6 @@ public class DatabaseManager implements Closeable {
     }
 
     public <T> void create(@NotNull T object) {
-        m_session.lock(object, LockModeType.PESSIMISTIC_WRITE);
         m_session.persist(object);
     }
 
