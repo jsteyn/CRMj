@@ -53,6 +53,7 @@ public class CRMjServerAjaxManager {
     private Route wrapAjax(Route route) {
         return (request, response) -> {
             try {
+                s_LOGGER.info("Ajax request received: {}", request.pathInfo());
                 response.type("application/json");
 
                 JsonObject output = (JsonObject) route.handle(request, response);

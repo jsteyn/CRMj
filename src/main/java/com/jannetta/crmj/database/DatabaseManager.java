@@ -13,10 +13,12 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.LockModeType;
 import java.io.Closeable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 public class DatabaseManager implements Closeable {
     private static final Logger s_LOGGER = LoggerFactory.getLogger(DatabaseManager.class);
@@ -52,11 +54,18 @@ public class DatabaseManager implements Closeable {
     }
 
     /**
-     * Open this resource, making all underlying resources available for use.
+     * Open this resource, making all underlying resources available for use. If a session is already open, this
+     * method will wait until it is closed before returning.
      * <br>
      * Should be used in conjunction with {@link #close()}.
+     * @throws RuntimeException If the session takes more than 2000ms to unlock.
      */
     public void open() {
+        long start = System.currentTimeMillis();
+        while (m_session != null) {
+            if (System.currentTimeMillis() > 2000)
+                throw new RuntimeException("Timeout waiting for session to unlock.");
+        }
         m_session = m_sessionFactory.openSession();
         m_session.beginTransaction();
     }
@@ -73,32 +82,33 @@ public class DatabaseManager implements Closeable {
     }
 
     public <T> void create(@NotNull T object) {
+        m_session.lock(object, LockModeType.PESSIMISTIC_WRITE);
         m_session.persist(object);
     }
 
     public <T> List<T> readAll(@NotNull Class<T> type) {
-        return m_session.createQuery("from " + type.getName(), type).getResultList();
+        return m_session.createQuery("from " + type.getName(), type).setLockMode(LockModeType.PESSIMISTIC_READ).getResultList();
     }
 
     public <T> List<T> readFrom(@NotNull Class<T> type, @NotNull String where, Map<String, Object> parameters) {
         Query<T> query = m_session.createQuery(String.format("from %s where %s", type.getName(), where), type);
         if (parameters != null)
             query.setProperties(parameters);
-        return query.getResultList();
+        return query.setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultList();
     }
 
     public List<Object[]> read(@NotNull String rawQuery, Map<String, Object> parameters) {
         Query<Object[]> query = m_session.createQuery(rawQuery, Object[].class);
         if (parameters != null)
             query.setProperties(parameters);
-        return query.getResultList();
+        return query.setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultList();
     }
 
     public Object readSingle(@NotNull String rawQuery, Map<String, Object> parameters) {
         Query<Object[]> query = m_session.createQuery(rawQuery, Object[].class);
         if (parameters != null)
             query.setProperties(parameters);
-        return query.getSingleResult();
+        return query.setLockMode(LockModeType.PESSIMISTIC_WRITE).getSingleResult();
     }
 
     public List<Object[]> readLimit(@NotNull String rawQuery, Map<String, Object> parameters, int limit, int offset) {
@@ -107,14 +117,16 @@ public class DatabaseManager implements Closeable {
         query.setMaxResults(limit);
         if (parameters != null)
             query.setProperties(parameters);
-        return query.getResultList();
+        return query.setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultList();
     }
 
     public <T> void update(@NotNull T object) {
+        m_session.lock(object, LockModeType.PESSIMISTIC_WRITE);
         m_session.merge(object);
     }
 
     public <T> void delete(@NotNull T object) {
+        m_session.lock(object, LockModeType.PESSIMISTIC_WRITE);
         m_session.delete(object);
     }
 }

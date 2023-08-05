@@ -101,8 +101,7 @@ class RecordList {
         }.bind(this), 5);
 
         this.deselectRecord();
-        this.retrieveRecordList();
-        this.retrieveRecordCount();
+        this.retrieveRecordList(this.retrieveRecordCount.bind(this));
     }
 
     /**
@@ -295,7 +294,9 @@ class RecordList {
             "post",
             `/add_${this.ajaxId}`,
             {"record": record},
-            this.onSendAddPerson.bind(this, onResponse)
+            this.onSendAddPerson.bind(this, function(onResponse) {
+                this.retrieveRecordCount(onResponse);
+            }.bind(this, onResponse))
         );
     }
 
@@ -359,7 +360,9 @@ class RecordList {
             "post",
             `/remove_${this.ajaxId}`,
             {"recordId": recordId},
-            this.onSendRemoveRecord.bind(this, onResponse)
+            this.onSendRemoveRecord.bind(this, function(onResponse) {
+                this.retrieveRecordCount(onResponse);
+            }.bind(this, onResponse))
         )
     }
 
