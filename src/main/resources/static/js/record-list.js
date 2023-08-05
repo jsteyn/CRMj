@@ -43,6 +43,8 @@ class RecordList {
      */
     recordEditContainer;
 
+    recordCountElement;
+
     /**
      * Record-list element currently selected (if null, no element is selected/edit container is in add mode).
      * @var {jQuery} selectedRecordElement
@@ -94,6 +96,8 @@ class RecordList {
 
         this.recordListContainer = this.container.find(".record-list-container");
         this.recordEditContainer = this.container.find(".record-edit-container");
+
+        this.recordCountElement = this.container.find(".record-count");
 
         this.paginator = new Paginator(this.container.find(".paginator-container"), function(newIndex, oldIndex) {
             this.listBegin = newIndex * this.listAmount;
@@ -272,6 +276,7 @@ class RecordList {
     onRetrieveRecordCount(onResponse, response) {
         this.recordCount = response["count"];
         this.paginator.setNumPages(Math.ceil(this.recordCount / this.listAmount));
+        this.recordCountElement.html(`${this.recordCount} records.`)
     }
 
     /**

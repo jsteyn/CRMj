@@ -33,7 +33,7 @@ public class Person {
     @SerializedName("nickName")
     @Column(name = "nick_name", length = 50)
     private String m_nickName;
-    @SerializedName("MarriedName")
+    @SerializedName("marriedName")
     @Column(name = "married_name", length = 50)
     private String m_marriedName;
 

@@ -1,5 +1,6 @@
 #macro(paginator $name)
     <div id="${name}" class="paginator-container">
+        <span class="record-count"></span>
         <button class="paginator-btn decrement">&lt;</button>
         <button class="paginator-btn increment">&gt;</button>
     </div>
