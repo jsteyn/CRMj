@@ -97,8 +97,8 @@ public class CRMjServerAjaxManager {
             m_databaseManager.open();
             HashMap<String, Object> queryParams = new HashMap<>();
             personListRaw = m_databaseManager.readLimit(
-                "SELECT m_id, m_firstName, m_lastName, m_marriedName, m_nickName " +
-                    "FROM Person ORDER by m_marriedName asc nulls first, m_lastName",
+                "SELECT m_id, m_firstName, m_lastName, m_nickName " +
+                    "FROM Person ORDER by m_lastName",
                 queryParams, amount, begin);
         }
 
@@ -107,14 +107,10 @@ public class CRMjServerAjaxManager {
             JsonObject personData = new JsonObject();
             personData.addProperty("recordId", (Integer) record[0]);
             String nickName = "";
-            if (record[4] != null) {
-                nickName = "(" + record[4] + ")";
+            if (record[3] != null) {
+                nickName = "(" + record[3] + ")";
             }
-            if (record[3] == null) {
-                personData.addProperty("display", String.format("%s, %s %s", record[2], record[1], nickName));
-            } else {
-                personData.addProperty("display", String.format("%s, %s", record[3], record[1], nickName));
-            }
+            personData.addProperty("display", String.format("%s, %s %s", record[2], record[1], nickName));
             personList.add(personData);
         }
 
@@ -168,7 +164,7 @@ public class CRMjServerAjaxManager {
             existing.setTitle(person.getTitle());
             existing.setDateOfBirth(person.getDateOfBirth());
             existing.setNickName(person.getNickName());
-            existing.setMarriedName(person.getMarriedName());
+            existing.setMaidenName(person.getMaidenName());
             m_databaseManager.update(existing);
         }
 
