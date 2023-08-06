@@ -3,19 +3,24 @@
 #parse("/static/templates/includes/site/people.vm")
 #parse("/static/templates/includes/site/dummy-tab.vm")
 
-<script src="/js/pagination.js"></script>
-<script src="/js/record-list.js"></script>
-<script src="/js/tab-list.js"></script>
-
 #set($title = "CRMj")
 #macro(content)
-    #tablist("table-tab-list", [
-        {"id": "content-people", "name": "People", "content": "#people_content()"},
-        {"id": "content-dummy",    "name": "Dummy",    "content": "#dummy_content()"}
-    ])
+    <div id="table-tab-list"></div>
+
+    <div id="people-content">
+        #people_content()
+    </div>
+    <div id="dummy-content">
+        #dummy_content()
+    </div>
 
     <script>
-        let tableTabList = new TabList("TableList", $("#table-tab-list"))
+        let tableTabList = new TabList("TableList", $("#table-tab-list"),
+            [
+                {"display": "People", "content": $("#people-content")},
+                {"display":  "Dummy", "content":  $("#dummy-content")}
+            ]
+        );
     </script>
 #end
 #parse("/static/templates/layouts/default.vm")

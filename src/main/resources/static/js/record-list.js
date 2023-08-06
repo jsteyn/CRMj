@@ -5,6 +5,14 @@
  */
 
 /**
+ * @typedef {Object} Property
+ * @property {string} display Display label of the property.
+ * @property {string} label Unique identifier for the property (must match the json-format name of the property in
+ * relation to its' formal class definition).
+ * @property {string} type HTML &lt;input&gt; tag type.
+ */
+
+/**
  * Handler class for managing lists of records.
  * <br>
  * This class is to be paired with the DOM structure defined in includes/common/record-list.vm
@@ -88,18 +96,57 @@ class RecordList {
      * @param {string} ajaxId See [RecordList::ajaxId]{@link this#ajaxId}
      * @param {jQuery} container See [RecordList::container]{@link this#container}
      * @param {function} validateRecordCallback See [RecordList::validateRecordCallback]{@link this#validateRecordCallback}
+     * @param {Array[Property]} properties List of all properties of each record.
      */
-    constructor(ajaxId, container, validateRecordCallback) {
+    constructor(ajaxId, container, validateRecordCallback, properties) {
         this.ajaxId = ajaxId;
         this.container = container;
         this.validateRecordCallback = validateRecordCallback;
 
+        this.container.addClass("record-container");
+
+        let containerId = this.container.attr("id");
+
+        this.container.append(`
+            <div class="record-list-manager">
+                <div class="record-list-container"></div>
+                <div class="record-list-footer">
+                    <div id="${containerId}-paginator"></div>
+                </div>
+            </div>
+            <div class="record-edit-container">
+                <div class="edit-container-table"></div>
+            </div>
+        `);
+
         this.recordListContainer = this.container.find(".record-list-container");
         this.recordEditContainer = this.container.find(".record-edit-container");
 
+        let recordEditTable = this.recordEditContainer.find(".edit-container-table");
+        console.log(properties);
+        for (let prop of properties) {
+            recordEditTable.append(`<label>${prop["display"]}</label>`);
+            recordEditTable.append(`<input class="property-${prop["label"]}" type="${prop.type}" />`);
+        }
+        let updateBtn = $(`<button class="btn-update">Update</button>`);
+        updateBtn.on("click", function() {
+            this.sendUpdateRecord();
+        }.bind(this));
+        recordEditTable.append(updateBtn);
+        let removeBtn = $(`<button class="btn-remove">Remove</button>`);
+        removeBtn.on("click", function() {
+            this.sendRemoveRecord();
+        }.bind(this));
+        recordEditTable.append(removeBtn);
+        let addBtn    = $(`<button class="btn-add">Add</button>`);
+        addBtn.on("click", function() {
+            this.sendAddRecord();
+        }.bind(this));
+        recordEditTable.append(addBtn);
+
         this.recordCountElement = this.container.find(".record-count");
 
-        this.paginator = new Paginator(this.container.find(".paginator-container"), function(newIndex, oldIndex) {
+        this.paginator = new Paginator(this.container.find(`#${containerId}-paginator`), function(newIndex, oldIndex) {
             this.listBegin = newIndex * this.listAmount;
             this.retrieveRecordList();
         }.bind(this), 5);

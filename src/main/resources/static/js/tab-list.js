@@ -1,4 +1,11 @@
 /**
+ * @typedef {Object} Tab
+ * @property {string} display Display name for this tab.
+ * @property {jQuery} content Content element to be displayed when this tab is selected. Will be moved under the
+ * tab-content-container subcomponent.
+ */
+
+/**
  * Handler class for managing a tab-list.
  * <br>
  * This class is to be paired with the DOM structure defined in includes/common/tab-list.vm
@@ -44,15 +51,38 @@ class TabList {
      * </ul>
      * @param {string} name See [TabList::name]{@link this.name}
      * @param {jQuery} container See [TabList::container]{@link this.container}
+     * @param {Array[Tab]} tabs List of all tabs for this tab-list.
      */
-    constructor(name, container) {
+    constructor(name, container, tabs) {
         this.name = name;
         this.container = container;
 
-        this.container.find(".tab-list button").on("click", {tabList: this}, function(event) {
-            event.data.tabList.selectTab($(this));
-        });
-        this.container.find(".tab-content-container .tab-content").hide();
+        this.container.addClass("tab-list-container");
+
+        let containerId = this.container.attr("id");
+
+        this.container.append(`
+            <div class="tab-list"></div>
+            <div class="tab-content-container"></div>
+        `);
+
+        let tabList = this.container.find(".tab-list");
+        let tabContent = this.container.find(".tab-content-container");
+        for (let i = 0; i < tabs.length; i++) {
+            let tab = tabs[i];
+
+            let cont = tab["content"];
+            tabContent.append(cont);
+            cont.hide();
+
+            let tabId = cont.attr("id");
+
+            let btn = $(`<button id="${tabId}-btn" data-target="${tabId}">${tab["display"]}</button>`)
+            btn.on("click", function(btn) {
+                this.selectTab(btn);
+            }.bind(this, btn));
+            tabList.append(btn);
+        }
 
         this.selectedTabStorageId = `${name}-selected-tab`;
 
@@ -72,6 +102,7 @@ class TabList {
      * @param {?jQuery} tab Button corresponding to the tab being selected.
      */
     selectTab(tab) {
+        console.log(tab);
         if (this.selectedTab !== null) {
             this.selectedTab.removeClass("selected");
             this.selectedTabContent.hide();

@@ -77,8 +77,12 @@ class Paginator {
 
         this.wrapMode = wrapMode;
 
-        this.incrementButton = this.container.find(".paginator-btn.increment");
-        this.decrementButton = this.container.find(".paginator-btn.decrement");
+        this.container.addClass("paginator-container");
+
+        this.decrementButton = $(`<button class="paginator-btn decrement">&lt;</button>`);
+        this.container.append(this.decrementButton);
+        this.incrementButton = $(`<button class="paginator-btn increment">&gt;</button>`);
+        this.container.append(this.incrementButton);
 
         this.setNumPages(numPages);
         this.setIndex(0);
@@ -119,6 +123,5 @@ class Paginator {
             }.bind(this, i));
             this.incrementButton.before(newButton);
         }
-        this.incrementButton.after();
     }
 }

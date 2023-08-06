@@ -1,9 +1,2 @@
-#macro(paginator $name)
-    <div id="${name}" class="paginator-container">
-        <span class="record-count"></span>
-        <button class="paginator-btn decrement">&lt;</button>
-        <button class="paginator-btn increment">&gt;</button>
-    </div>
-#end
-
+<script src="/js/pagination.js"></script>
 <link rel="stylesheet" href="/css/pagination.css">
