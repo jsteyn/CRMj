@@ -73,7 +73,7 @@ class RecordList {
      * Number of records to be retrieved and displayed.
      * @var {number} listAmount
      */
-    listAmount = 10;
+    listAmount = 20;
 
     /**
      * Callback for validating the contents of the edit container.
@@ -98,6 +98,7 @@ class RecordList {
      * @param {jQuery} container See [RecordList::container]{@link this#container}
      * @param {function} validateRecordCallback See [RecordList::validateRecordCallback]{@link this#validateRecordCallback}
      * @param {Array[Property]} properties List of all properties of each record.
+     * @param {function} retrieveRecordCountCallback See [RecordList::retrieveRecordCountCallback]{@link this#retrieveRecordCountCallback}
      */
     constructor(ajaxId, container, validateRecordCallback, properties, {retrieveRecordCountCallback = null}) {
         this.ajaxId = ajaxId;
@@ -314,6 +315,10 @@ class RecordList {
             onResponse(response);
     }
 
+    /**
+     * Retrieve the number of records in the database
+     * @param onResponse
+     */
     retrieveRecordCount(onResponse) {
         runAjax(
             "post",
