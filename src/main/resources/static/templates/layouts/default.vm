@@ -1,3 +1,13 @@
+#**
+ * Layout file to be included at the root by all web-pages. Defines the components of a page which are consistent
+ * to all pages (such as the header, footer, and common external files and style sheets).
+ * <b>Params:</b>
+ * <ul>
+ *     <li><b>title [variable] - </b>Web page title displayed on the browser tab.</li>
+ *     <li><b>content [macro] - </b>Actual page contents placed between header and footer.</li>
+ * </ul>
+ *#
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -12,7 +22,7 @@
     </head>
     <body>
         <header>
-            <h1><a href="/">CRMj</a></h1>
+            <h1><img src="/images/favicon.ico"><a href="/">CRMj</a></h1>
         </header>
         #content()
         <footer>

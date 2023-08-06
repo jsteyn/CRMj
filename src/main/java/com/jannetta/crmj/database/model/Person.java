@@ -33,9 +33,9 @@ public class Person {
     @SerializedName("nickName")
     @Column(name = "nick_name", length = 50)
     private String m_nickName;
-    @SerializedName("marriedName")
-    @Column(name = "married_name", length = 50)
-    private String m_marriedName;
+    @SerializedName("maidenName")
+    @Column(name = "maiden_name", length = 50)
+    private String m_maidenName;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "m_people")
     private Set<Address> m_addresses;
@@ -102,12 +102,12 @@ public class Person {
         m_nickName = nickName;
     }
 
-    public String getMarriedName() {
-        return m_marriedName;
+    public String getMaidenName() {
+        return m_maidenName;
     }
 
-    public void setMarriedName(String MarriedName) {
-        m_marriedName = MarriedName;
+    public void setMaidenName(String maidenName) {
+        m_maidenName = maidenName;
     }
 
 
