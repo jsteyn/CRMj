@@ -1,8 +1,9 @@
 :root {
-    --container-border-color: darkblue;
+    --container-border-color: #dfe3eb;
 
-    --selector-color-unselected: black;
-    --selector-color-selected: darkmagenta;
+    --selector-color-hover: #ed7558;
+    --selector-color-unselected: #429ab3;
+    --selector-color-selected: #429ab3;
 }
 
 .record-container {
@@ -19,7 +20,7 @@
 }
 
 .record-element {
-    font-size: large;
+    font-size: 12px;
     font-weight: bold;
     cursor: pointer;
 
@@ -28,6 +29,11 @@
 
 .record-element.selected {
     color: var(--selector-color-selected);
+    text-decoration: underline;
+}
+
+.record-element:hover {
+    color: var(--selector-color-hover);
 }
 
 record-list-footer {

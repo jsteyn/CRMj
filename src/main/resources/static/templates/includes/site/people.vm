@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/people.css">
     <h3>People</h3>
     <div>
+        <span class="button-bar" id="record-count">erwtwert</span>
         <button onclick="personRecordList.retrieveRecordList();">Refresh</button>
         <button onclick="personRecordList.deselectRecord();">Add New Person</button>
     </div>
@@ -26,7 +27,12 @@
                 {"display":  "Maiden Name:", "label":  "maidenName", "type": "text"},
                 {"display":        "Title:", "label":       "title", "type": "text"},
                 {"display":     "Birthday:", "label": "dateOfBirth", "type": "date"}
-            ]
+            ],
+            {
+                retrieveRecordCountCallback: function(count) {
+                    $("#record-count").html(`Record number: ${count}`)
+                }
+            }
         );
     </script>
 #end

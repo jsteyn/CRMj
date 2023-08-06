@@ -82,6 +82,7 @@ class RecordList {
      * @returns {ValidationResult} Validation status.
      */
     validateRecordCallback;
+    retrieveRecordCountCallback;
 
     /**
      * Create new RecordList.
@@ -98,10 +99,12 @@ class RecordList {
      * @param {function} validateRecordCallback See [RecordList::validateRecordCallback]{@link this#validateRecordCallback}
      * @param {Array[Property]} properties List of all properties of each record.
      */
-    constructor(ajaxId, container, validateRecordCallback, properties) {
+    constructor(ajaxId, container, validateRecordCallback, properties, {retrieveRecordCountCallback = null}) {
         this.ajaxId = ajaxId;
         this.container = container;
         this.validateRecordCallback = validateRecordCallback;
+
+        this.retrieveRecordCountCallback = retrieveRecordCountCallback;
 
         this.container.addClass("record-container");
 
@@ -324,6 +327,9 @@ class RecordList {
         this.recordCount = response["count"];
         this.paginator.setNumPages(Math.ceil(this.recordCount / this.listAmount));
         this.recordCountElement.html(`${this.recordCount} records.`)
+
+        if (this.retrieveRecordCountCallback)
+            this.retrieveRecordCountCallback(response["count"]);
     }
 
     /**

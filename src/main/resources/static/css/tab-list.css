@@ -1,6 +1,6 @@
 :root {
-    --tab-border-color: #cccccc;
-    --tab-bg-color: #f1f1f1;
+    --tab-border-color: #ffffff;
+    --tab-bg-color: #eaf0f6;
     --tab-btn-hover-color: #dddddd;
 }
 
@@ -22,7 +22,8 @@
     background-color: inherit;
 
     cursor: pointer;
-    font-size: 17px;
+    font-size: 12px;
+    color: #535b6c;
 
     transition: 0.3s;
 }
