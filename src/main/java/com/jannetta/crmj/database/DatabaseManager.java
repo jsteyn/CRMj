@@ -96,6 +96,13 @@ public class DatabaseManager implements Closeable {
         return query.setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultList();
     }
 
+    public <T> List<T> readJoin(@NotNull Class<T> type, @NotNull String join, @NotNull String where, Map<String, Object> parameters) {
+        Query<T> query = m_session.createQuery(String.format("from %s join %s where %s", type.getName(), join, where), type);
+        if (parameters != null)
+            query.setProperties(parameters);
+        return query.setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultList();
+    }
+
     public List<Object[]> read(@NotNull String rawQuery, Map<String, Object> parameters) {
         Query<Object[]> query = m_session.createQuery(rawQuery, Object[].class);
         if (parameters != null)
