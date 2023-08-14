@@ -3,6 +3,7 @@ package com.jannetta.crmj.app;
 import com.google.gson.*;
 import com.jannetta.crmj.database.DatabaseManager;
 import com.jannetta.crmj.database.model.Address;
+import com.jannetta.crmj.database.model.Addresses;
 import com.jannetta.crmj.database.model.Person;
 import com.jannetta.crmj.nonhibernate.NonHibernateQueries;
 import org.jetbrains.annotations.NotNull;
@@ -82,17 +83,13 @@ public class CRMjServerAjaxManager {
             m_databaseManager.open();
             HashMap<String, Object> queryParams = new HashMap<>();
             queryParams.put("id", personId);
-            person = m_databaseManager.readFrom(Person.class, "m_id = :id", queryParams).get(0);
+//            person = m_databaseManager.readFrom(Person.class, "m_id = :id", queryParams).get(0);
+            person = NonHibernateQueries.getPerson(personId);
             output.add("record", m_databaseManager.createGson().toJsonTree(person));
-
-//            queryParams = new HashMap<>();
-//            queryParams.put("id", personId);
-//            addresses = m_databaseManager.readJoin(Address.class, "Address.people p", "p.m_id = :id", queryParams);
-//            output.add("record", m_databaseManager.createGson().toJsonTree(addresses));
-//            System.out.println("Get addresses");
-//            NonHibernateQueries.getAddresses(personId);
+            addresses = NonHibernateQueries.getAddresses(personId);
         }
         output.addProperty("recordId", personId);
+        output.add("addresses", m_databaseManager.createGson().toJsonTree(addresses));
 
         return output;
     }

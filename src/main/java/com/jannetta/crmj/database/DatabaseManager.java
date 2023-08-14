@@ -90,6 +90,7 @@ public class DatabaseManager implements Closeable {
     }
 
     public <T> List<T> readFrom(@NotNull Class<T> type, @NotNull String where, Map<String, Object> parameters) {
+        System.out.println("Query");
         Query<T> query = m_session.createQuery(String.format("from %s where %s", type.getName(), where), type);
         if (parameters != null)
             query.setProperties(parameters);

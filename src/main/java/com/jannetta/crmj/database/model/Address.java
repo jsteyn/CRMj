@@ -60,6 +60,9 @@ public class Address {
 
     }
 
+    public void setId(int id) {
+        m_id = id;
+    }
     public int getId() {
         return m_id;
     }
