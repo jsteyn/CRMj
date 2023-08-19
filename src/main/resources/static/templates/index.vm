@@ -1,5 +1,4 @@
 #parse("/static/templates/includes/common/tab-list.vm")
-
 #parse("/static/templates/includes/site/people.vm")
 #parse("/static/templates/includes/site/dummy-tab.vm")
 
