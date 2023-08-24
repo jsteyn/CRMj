@@ -1,7 +1,24 @@
-function setForm(onResponse) {
+let recordLimit = 20;
+let recordIndex = 0;
+
+let paginator = new Paginator($("#record-list-paginator"),function (new_index, old_index) {
+    recordIndex = new_index * recordLimit;
+    getPeople()
+}, 5);
+getPersonCount();
+
+// BUTTON ACTIONS
+let updateBtn = $(`.btn-update`);
+updateBtn.on("click", updatePerson);
+let removeBtn = $(`.btn-remove`);
+// removeBtn.on("click", removePerson.bind(null, $(".edit-container-table").attr(`data-id`)));
+let addBtn = $(`.btn-add`);
+addBtn.on("click", addPerson);
+
+function setPersonForm(onResponse) {
     // Collect data from input fields
-    let personId = $(".edit-container-table").data("id");
-    console.log("person id: " + personId);
+    console.log($(".property-dateOfBirth").val());
+    let personId = $(".edit-container-table").attr("data-id");
     let dateOfBirth = $(".property-dateOfBirth").val();
     let firstName = $(".property-firstName").val();
     let lastName = $(".property-lastName").val();
@@ -12,7 +29,7 @@ function setForm(onResponse) {
     let marriedName = $(".property-marriedName").val(); // You need to have this field in your HTML
 
     // Create a data object to send in the POST request
-    let postData = new Object();
+    let postData = {};
     postData.personId = personId;
     postData.dateOfBirth = dateOfBirth;
     postData.firstName = firstName;
@@ -27,21 +44,39 @@ function setForm(onResponse) {
     return data;
 }
 
-// UPDATE EXISTING PERSON
-function updatePerson(onResponse) {
-    let data = setForm(onResponse);
+// GET NUMBER OF PERSON RECORDS
+function getPersonCount(onResponse) {
     $.post(
-        "/updatePerson",
-        data,
+        "/getPersonCount",
+        null,
         function(response) {
-
+            let recordCount = response["record_count"];
+            paginator.setNumPages(recordCount / recordLimit);
         }
     )
 }
 
+// UPDATE EXISTING PERSON
+function updatePerson(onResponse) {
+    console.log("Update person")
+    let data = setPersonForm(onResponse);
+    console.log(data);
+    $.post(
+        "/updatePerson",
+        data,
+        function(response) {
+            $("#message").text("Record updated.")
+            setTimeout(function () {$("#message").html("&nbsp;")}, 3000, undefined);
+            getPeople()
+        }
+    )
+}
+
+
 // ADD PERSON TO DATABASE
 function addPerson(onResponse) {
-    let data = setForm(onResponse);
+    console.log("Add person")
+    let data = setPersonForm(onResponse);
     $.post(
         "/addPerson", // Replace with your actual endpoint
         data,
@@ -54,24 +89,42 @@ function addPerson(onResponse) {
 
 }
 
+function removePerson(personId) {
+    console.log("Delete person: " + personId);
+    const response = confirm("Are you sure you want to delete this record?")
+    if (response) {
+        $.post(
+            "/removePerson",
+            "{personId: " + personId + "}",
+            function () {
+                getPeople();
+                clearForm();
+            },
+            "json"
+        )
+    }
+}
 // LOAD AND DISPLAY PEOPLE IN DIV
 function getPeople(onResponse) {
-    $.ajax({
-        url: "/getPeople",
-        type: "post",
-        dataType: "json",
-        success: onGetPeopleSuccess
-    });
+    $.post(
+        "/getPeople",
+        `{"begin": ${recordIndex}, "amount": ${recordLimit}}`,
+        onGetPeopleSuccess,
+        "json",
+    );
 }
 
 function onGetPeopleSuccess(response) {
     // let record_list_container = document.getElementById("record-list-container");
-    let record_list_container = $("#record-list-container");
-    record_list_container.empty();
+    $("#record-list-container").empty();
     let people = response["people"]
     for (let person of people) {
-        let p = $(`<p class="record-element" data-id="${person["personId"]}">${person["lastName"]}, ${person["firstName"]}</p>`);
-        record_list_container.append(p);
+        let nickname ="";
+        if (person.nickName === undefined || person.nickName === "") {
+            nickname = "";
+        } else nickname = "(" + person.nickName + ")";
+        let p = $(`<p class="record-element" data-id="${person["personId"]}">${person["lastName"]}, ${person["firstName"]} ${nickname}</p>`);
+        $("#record-list-container").append(p);
     }
     onGetPeopleResponse(response)
 }
@@ -95,9 +148,11 @@ function onGetPeopleResponse(response) {
         // if not selected, unset previous and select current
         } else {
             // unset previous record first
-            let selected = $(".record-element.selected").removeClass("selected");
-            $(".edit-container-table").data("id",$(this).data("id"));
+            $(".record-element.selected").removeClass("selected");
+            //$(".edit-container-table").data("id",$(this).data("id"));
+            $(this).addClass("selected")
             $(".edit-container-table").attr("data-id",$(this).data("id"));
+            $(".edit-container-buttons").attr("data-id",$(this).data("id"));
             // $(this).addClass("selected");
             $(".btn-add").css("display", "none");
             $(".btn-update").removeAttr("style");
@@ -117,25 +172,12 @@ function onGetPeopleResponse(response) {
                 },
                 "json"
             );
+            getAddresses($(this).data("id"))
         }
-
     });
 }
 
-function removePerson(personId) {
-    const response = confirm("Are you sure you want to delete this record?")
-    if (response) {
-        $.post(
-            "/removePerson",
-            "{personId: " + personId + "}",
-            function () {
-                getPeople();
-                clearForm();
-            },
-            "json"
-        )
-    }
-}
+
 
 function clearForm() {
     // Clear form
@@ -150,4 +192,40 @@ function clearForm() {
     $(".btn-add").removeAttr("style");
     $(".btn-update").css("display", "none");
     $(".btn-remove").css("display", "none");
+}
+
+function getAddresses(recordId) {
+    $.post(
+        "/getAddresses",
+        "{recordId: " + recordId + "}",
+        onGetAddressesSuccess
+    )
+}
+
+function onGetAddressesSuccess(response) {
+    console.log(response)
+    $(".edit-container-address-list").empty()
+    let addresses = response["addresses"]
+    for (let address of addresses) {
+        console.log(address)
+        let p = $(`<p class="address-element" data-id="${address["addressId"]}">${address["addressLine1"]}</p>`);
+        $(".edit-container-address-list").append(p);
+    }
+    onGetAddressesResponse(response)
+}
+
+function onGetAddressesResponse(response) {
+
+}
+
+function updateAddress(recordId) {
+
+}
+
+function removeAddress(recordId) {
+
+}
+
+function addAddress(recordId) {
+
 }

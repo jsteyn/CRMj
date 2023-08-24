@@ -98,6 +98,11 @@ public class Person {
         m_dateOfBirth = dateOfBirth;
     }
 
+//    public void setDateOfBirth(String dateOfBirth) {
+//
+//        m_dateOfBirth = dateOfBirth;
+//    }
+
     public String getNickName() {
         return m_nickName;
     }

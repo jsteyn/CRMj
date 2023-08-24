@@ -23,6 +23,8 @@ public class JRoot {
         Spark.post("/addPerson", NonHibernateQueries::addPerson);
         Spark.post("/removePerson", NonHibernateQueries::removePerson);
         Spark.post("/updatePerson", NonHibernateQueries::updatePerson);
+        Spark.post("/getPersonCount", NonHibernateQueries::getPersonCount);
+        Spark.post("/getAddresses", NonHibernateQueries::getAddresses);
 
     }
 

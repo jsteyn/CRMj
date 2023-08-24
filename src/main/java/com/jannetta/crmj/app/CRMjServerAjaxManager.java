@@ -85,10 +85,10 @@ public class CRMjServerAjaxManager {
 //            person = m_databaseManager.readFrom(Person.class, "m_id = :id", queryParams).get(0);
             person = NonHibernateQueries.getPerson(personId);
             output.add("record", m_databaseManager.createGson().toJsonTree(person));
-            addresses = NonHibernateQueries.getAddresses(personId);
+            //addresses = NonHibernateQueries.getAddresses(personId);
         }
         output.addProperty("recordId", personId);
-        output.add("addresses", m_databaseManager.createGson().toJsonTree(addresses));
+        //output.add("addresses", m_databaseManager.createGson().toJsonTree(addresses));
 
         return output;
     }

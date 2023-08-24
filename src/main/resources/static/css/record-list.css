@@ -23,7 +23,7 @@
     font-size: 12px;
     font-weight: bold;
     cursor: pointer;
-     color: var(--selector-color-unselected);
+    color: var(--selector-color-unselected);
 }
 
 .record-element.selected {
@@ -54,4 +54,38 @@ record-list-footer {
 
 .edit-container-table label {
     text-align: right;
+}
+
+.message {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--selector-color-hover);
+    text-align: left;
+}
+
+.edit-container-address-table {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    grid-gap: 5px;
+    padding: 4px;
+}
+
+.edit-container-address-table label {
+    text-align: right;
+}
+
+.address-element {
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--selector-color-unselected);
+}
+
+.address-element.selected {
+    color: var(--selector-color-selected);
+    text-decoration: underline;
+}
+
+.address-element:hover {
+    color: var(--selector-color-hover);
 }

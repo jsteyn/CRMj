@@ -12,7 +12,9 @@
     <div id="person-record-list" class="record-container">
         <div class="record-list-manager" id="record-list-manager">
             <div class="record-list-container" id="record-list-container"></div>
-            <div class="record-list-footer"></div>
+            <div class="record-list-footer">
+                <div id="record-list-paginator"></div>
+            </div>
         </div>
         <div class="record-edit-container">
             <div class="edit-container-table">
@@ -30,11 +32,42 @@
                 <input class="property-title" type="text">
                 <label>Birthday:</label>
                 <input class="property-dateOfBirth" type="date">
-                <button class="btn-update" onclick="updatePerson()" style="display: none;">Update</button>
+            </div>
+            <div class="edit-container-buttons">
+                <button class="btn-update" style="display: none;">Update</button>
                 <button class="btn-remove" onclick="removePerson($(this).parent().data(`id`))" style="display: none;">Remove</button>
-                <button class="btn-add" onclick="addPerson()">Add</button>
+                <button class="btn-add">Add</button>
+            </div>
+            <div class="edit-container-message">
+                <div id="message" class="message" style="border: solid 1px black">&nbsp;</div>
+            </div>
+            <div class="edit-container-address-table">
+                <label>Address line 1:</label>
+                <input class="property-addressLine1" type="text">
+                <label>Address line 2:</label>
+                <input class="property-addressLine2" type="text">
+                <label>Address line 3:</label>
+                <input class="property-addressLine3" type="text">
+                <label>City:</label>
+                <input class="property-city" type="text">
+                <label>County:</label>
+                <input class="property-county" type="text">
+                <label>Country:</label>
+                <input class="property-country" type="text">
+                <label>Post code:</label>
+                <input class="property-postcode" type="text">
+            </div>
+            <div class="edit-container-address-buttons">
+                <button class="btn-address-update" onclick="updateAddress()" style="display: none;">Update</button>
+                <button class="btn-address-remove" onclick="removeAddress($(this).parent().data(`id`))" style="display: none;">Remove</button>
+                <button class="btn-address-add" onclick="addAddress()">Add</button>
+            </div>
+            <div class="edit-container-address-list">
+
             </div>
         </div>
     </div>
     <script src="js/jpeople.js"></script>
+    <script>
+    </script>
 #end
