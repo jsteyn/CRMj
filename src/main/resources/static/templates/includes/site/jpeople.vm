@@ -6,7 +6,7 @@
     <div>
         <span class="button-bar" id="record-count">$count</span>
         <button onclick="getPeople()">Refresh</button>
-        <button onclick="clearForm()">Add New Person</button>
+        <button onclick="clearPersonForm()">Add New Person</button>
     </div>
 
     <div id="person-record-list" class="record-container">
@@ -39,7 +39,7 @@
                 <button class="btn-add">Add</button>
             </div>
             <div class="edit-container-message">
-                <div id="message" class="message" style="border: solid 1px black">&nbsp;</div>
+                <div id="message" class="message">&nbsp;</div>
             </div>
             <div class="edit-container-address-table">
                 <label>Address line 1:</label>
@@ -60,7 +60,7 @@
             <div class="edit-container-address-buttons">
                 <button class="btn-address-update" onclick="updateAddress()" style="display: none;">Update</button>
                 <button class="btn-address-remove" onclick="removeAddress($(this).parent().data(`id`))" style="display: none;">Remove</button>
-                <button class="btn-address-add" onclick="addAddress()">Add</button>
+                <button class="btn-address-add" onclick="addAddress($(this).parent().data(`person-id`))">Add</button>
             </div>
             <div class="edit-container-address-list">
 

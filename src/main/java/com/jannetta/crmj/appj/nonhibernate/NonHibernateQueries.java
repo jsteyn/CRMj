@@ -62,7 +62,7 @@ public class NonHibernateQueries {
     public static JsonObject getPerson(Request request, Response response) {
         response.type("application/json");
         JsonObject parameters = JsonParser.parseString(request.body()).getAsJsonObject();
-        int personId = parameters.get("recordId").getAsInt();
+        int personId = parameters.get("personId").getAsInt();
         String query = "SELECT person_id, date_of_birth, first_name, last_name, middle_names, title," +
                 "nick_name, maiden_name, married_name FROM people WHERE person_id " + " = '" + personId +
                 "' ORDER BY last_name";
@@ -123,24 +123,8 @@ public class NonHibernateQueries {
         Person person = setPersonFromRequest(personId, parameters);
         String query = "UPDATE people SET date_of_birth = ?, first_name = ?, last_name = ?, middle_names = ?, " +
                 "title = ?, nick_name = ?, maiden_name = ? WHERE person_id = ?";
-        int ret_val = 0;
         try {
-            Connection conn = connect();
-            PreparedStatement p_stmt = conn.prepareStatement(query);
-            p_stmt.setString(1, (person.getDateOfBirth()==null)?null:getTimeStamp(person.getDateOfBirth().toString()));
-            p_stmt.setString(2, person.getFirstName());
-            p_stmt.setString(3, person.getLastName());
-            p_stmt.setString(4, person.getMiddleNames());
-            p_stmt.setString(5, person.getTitle());
-            p_stmt.setString(6, person.getNickName());
-            p_stmt.setString(7, person.getMaidenName());
-            p_stmt.setInt(8, person.getId());
-            ret_val = p_stmt.executeUpdate();
-            JsonObject object = getJsonObject("{}", true);
-            System.out.println("Ran executeUpdate ret val: " + person.getId());
-            object.addProperty("sql_ret_val", ret_val);
-            conn.close();
-            return object;
+            return createPersonPStmt(person, query);
         } catch (SQLException e) {
             e.printStackTrace();
             JsonObject object = getJsonObject("{}", false);
@@ -156,23 +140,8 @@ public class NonHibernateQueries {
         Person person = setPersonFromRequest(personId, parameters);
         String query = "INSERT INTO people(date_of_birth, first_name, last_name, middle_names, title, " +
                 "nick_name, maiden_name, married_name) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-        int ret_val = 0;
         try {
-            Connection conn = connect();
-            PreparedStatement p_stmt = conn.prepareStatement(query);
-            p_stmt.setString(1, (person.getDateOfBirth()==null)?null:getTimeStamp(person.getDateOfBirth().toString()));
-            p_stmt.setString(2, person.getFirstName());
-            p_stmt.setString(3, person.getLastName());
-            p_stmt.setString(4, person.getMiddleNames());
-            p_stmt.setString(5, person.getTitle());
-            p_stmt.setString(6, person.getNickName());
-            p_stmt.setString(7, person.getMaidenName());
-            p_stmt.setInt(8, person.getId());
-            ret_val = p_stmt.executeUpdate();
-            JsonObject output = getJsonObject("", true);
-            output.addProperty("sql_return_value", ret_val);
-            conn.close();
-            return output;
+            return createPersonPStmt(person, query);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             response.status(500);
@@ -182,13 +151,32 @@ public class NonHibernateQueries {
         }
     }
 
+    @NotNull
+    private static JsonObject createPersonPStmt(Person person, String query) throws SQLException {
+        int ret_val;
+        Connection conn = connect();
+        PreparedStatement p_stmt = conn.prepareStatement(query);
+        p_stmt.setString(1, (person.getDateOfBirth()==null)?null:getTimeStamp(person.getDateOfBirth().toString()));
+        p_stmt.setString(2, person.getFirstName());
+        p_stmt.setString(3, person.getLastName());
+        p_stmt.setString(4, person.getMiddleNames());
+        p_stmt.setString(5, person.getTitle());
+        p_stmt.setString(6, person.getNickName());
+        p_stmt.setString(7, person.getMaidenName());
+        p_stmt.setInt(8, person.getId());
+        ret_val = p_stmt.executeUpdate();
+        JsonObject output = getJsonObject("{}", true);
+        output.addProperty("sql_return_value", ret_val);
+        conn.close();
+        return output;
+    }
+
 
     public static JsonObject removePerson(Request request, Response response) {
         response.type("application/json");
         JsonObject output;
         JsonObject parameters = JsonParser.parseString(request.body()).getAsJsonObject();
         int personId = parameters.get("personId").getAsInt();
-        System.out.println("Delete person_id: " + personId);
         String query = "delete from people where person_id = ?";
         try {
             Connection conn = connect();
@@ -196,7 +184,7 @@ public class NonHibernateQueries {
             pstmt.setInt(1, personId);
             pstmt.executeUpdate();
             output = getJsonObject("{}", true);
-            output.addProperty("recordId", personId);
+            output.addProperty("personId", personId);
             conn.close();
         } catch (SQLException e) {
             output = getJsonObject("{}", false);
@@ -226,21 +214,137 @@ public class NonHibernateQueries {
         }
     }
 
+    public static JsonObject addAddress(Request request, Response response) {
+        response.type("application/json");
+        JsonObject parameters = JsonParser.parseString(request.body()).getAsJsonObject();
+        // set address_id to 0 because it is a new address and the id will be autogenerated
+        int address_id = 0;
+        int person_id = parameters.get("personId").getAsInt();
+        // get address info from request (html form)
+        Address address = setAddressFromRequest(address_id, parameters);
+        String query1 = "INSERT INTO addresses(address_line_1, address_line_2, address_line_3, city, county, county, " +
+                "postcode) VALUES(?, ?, ?, ?, ?, ?, ?)";
+        String query2 = "INSERT INTO person_address(address_id, person_id) VALUES(?, ?)";
+        try {
+            // add a new address
+            JsonObject jsonObject = createAddressPStmt(address, query1);
+
+            // get last primary key
+            Connection conn = connect();
+
+            // add an entry to relate address to person
+            createPersonAddressPStmt(jsonObject.get("addressId").getAsInt(), person_id, query2);
+            return jsonObject;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            response.status(500);
+            JsonObject output = getJsonObject("", false);
+            output.addProperty("error", e.getMessage());
+            return output;
+        }
+    }
+
+
+    /**
+     * Create a prepared statement for inserting a new address for person into the database (person_address table)
+     * and execute the query
+     * @param address_id
+     * @param query
+     * @return
+     */
+    public static JsonObject createPersonAddressPStmt(int address_id, int person_id, String query) throws SQLException {
+        Connection conn = connect();
+        PreparedStatement p_stmt = conn.prepareStatement(query);
+        p_stmt.setInt(1, address_id);
+        p_stmt.setInt(2, person_id);
+        int ret_val = p_stmt.executeUpdate();
+        JsonObject output = getJsonObject("{}", true);
+        output.addProperty("sql_return_value", ret_val);
+        conn.close();
+        return output;
+    }
+
+    /**
+     * Create a prepared statement for inserting a new address (addresses table) into the database and execute the query.
+     * @param address
+     * @param query
+     * @return
+     */
+    public static JsonObject createAddressPStmt(Address address, String query) throws SQLException {
+        Connection conn = connect();
+        PreparedStatement p_stmt = conn.prepareStatement(query);
+        p_stmt.setString(1, address.getAddressLine1());
+        p_stmt.setString(2, address.getAddressLine2());
+        p_stmt.setString(3, address.getAddressLine3());
+        p_stmt.setString(4, address.getCity());
+        p_stmt.setString(5, address.getCounty());
+        p_stmt.setString(6, address.getCountry());
+        p_stmt.setString(7, address.getPostcode());
+        int ret_val = p_stmt.executeUpdate();
+        JsonObject output = getJsonObject("{}", true);
+        output.addProperty("sql_return_value", ret_val);
+
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("select last_insert_rowid()");
+        if (!rs.next()) {
+            System.out.println("Something went wrong");
+        } else {
+            int address_id = rs.getInt("last_insert_rowid()");
+            System.out.println("Address id: " + address_id);
+            output.addProperty("addressId", address_id);
+        }
+
+        conn.close();
+        return output;
+    }
+
+    public static JsonObject getAddress(Request request, Response response) {
+        response.type("application/json");
+        Address address = new Address();
+        try {
+            JsonObject parameters = JsonParser.parseString(request.body()).getAsJsonObject();
+            int addressId = parameters.get("addressId").getAsInt();
+            String query = "select a.address_id, a.address_line_1, a.address_line_2, a.address_line_3 , a.city , " +
+                    "a.country , a.county , a.postcode  from addresses as a where " +
+                    "a.address_id='" + addressId + "'";
+            String url = "jdbc:sqlite:" + "/home/jannetta/.CRMj/data.db";
+            Connection conn = connect();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            // loop through the result set
+            rs.next();
+            address.setId(rs.getInt("address_id"));
+            address.setAddressLine1(rs.getString("address_line_1"));
+            address.setAddressLine2(rs.getString("address_line_2"));
+            address.setAddressLine3(rs.getString("address_line_3"));
+            address.setCity(rs.getString("city"));
+            address.setCountry(rs.getString("country"));
+            address.setCounty(rs.getString("county"));
+            address.setPostcode(rs.getString("postcode"));
+            String json = getJson(address);
+            conn.close();
+            return getJsonObject(getJson(address), true);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return getJsonObject(getJson(address), false);
+        }
+    }
+
     public static JsonObject getAddresses(Request request, Response response) {
         response.type("application/json");
         Addresses addresses = new Addresses();
         try {
             JsonObject parameters = JsonParser.parseString(request.body()).getAsJsonObject();
-            int personId = parameters.get("recordId").getAsInt();
+            int personId = parameters.get("personId").getAsInt();
             String query = "select a.address_id, a.address_line_1, a.address_line_2, a.address_line_3 , a.city , " +
-                    "a.country , a.county , a.postcode  from person_address as p join addresses as a where " +
+                    "a.country , a.county , a.postcode  from person_address as p join addresses as a " +
+                    "on p.address_id = a.address_id where " +
                     "p.person_id='" + personId + "'";
             String url = "jdbc:sqlite:" + "/home/jannetta/.CRMj/data.db";
             Connection conn = connect();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             // loop through the result set
-
             while (rs.next()) {
                 Address address = new Address();
                 address.setId(rs.getInt("address_id"));
@@ -254,13 +358,31 @@ public class NonHibernateQueries {
                 addresses.add(address);
             }
             String json = getJson(addresses);
-            System.out.println(json);
             conn.close();
             return getJsonObject(getJson(addresses), true);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return getJsonObject(getJson(addresses), false);
         }
+    }
+
+    /**
+     * Populate Address from response given as JsonObject
+     * @param addressId
+     * @param parameters
+     * @return
+     */
+    private static Address setAddressFromRequest(int addressId, JsonObject parameters) {
+        Address address = new Address();
+        address.setId(addressId);
+        address.setAddressLine1(parameters.has("addressLine1") ? parameters.get("addressLine1").getAsString() : null);
+        address.setAddressLine2(parameters.has("addressLine2") ? parameters.get("addressLine1").getAsString() : null);
+        address.setAddressLine3(parameters.has("addressLine3") ? parameters.get("addressLine1").getAsString() : null);
+        address.setCity(parameters.has("city") ? parameters.get("city").getAsString() : null);
+        address.setCounty(parameters.has("county") ? parameters.get("county").getAsString() : null);
+        address.setCountry(parameters.has("country") ? parameters.get("country").getAsString() : null);
+        address.setPostcode(parameters.has("postcode") ? parameters.get("postcode").getAsString() : null);
+        return address;
     }
 
     private static void populatePerson(Person person, ResultSet rs) throws SQLException {
@@ -274,6 +396,12 @@ public class NonHibernateQueries {
         person.setNickName(rs.getString("nick_name"));
     }
 
+    /**
+     * Populate Person class from response given as JsonObject
+     * @param personId
+     * @param parameters
+     * @return
+     */
     private static Person setPersonFromRequest(int personId, JsonObject parameters) {
         Person person = new Person();
         person.setId(personId);
@@ -318,7 +446,6 @@ public class NonHibernateQueries {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
             if (date.equals("null") || date.equals("") || date == null) {
-                System.out.println("In here");
                 return null;
             } else {
                 java.util.Date parsedDate = dateFormat.parse(date);

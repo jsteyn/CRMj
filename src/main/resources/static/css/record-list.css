@@ -61,6 +61,7 @@ record-list-footer {
     font-weight: bold;
     color: var(--selector-color-hover);
     text-align: left;
+    background: #eaf0f6;
 }
 
 .edit-container-address-table {

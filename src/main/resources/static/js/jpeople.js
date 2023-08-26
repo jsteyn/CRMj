@@ -17,7 +17,6 @@ addBtn.on("click", addPerson);
 
 function setPersonForm(onResponse) {
     // Collect data from input fields
-    console.log($(".property-dateOfBirth").val());
     let personId = $(".edit-container-table").attr("data-id");
     let dateOfBirth = $(".property-dateOfBirth").val();
     let firstName = $(".property-firstName").val();
@@ -58,9 +57,7 @@ function getPersonCount(onResponse) {
 
 // UPDATE EXISTING PERSON
 function updatePerson(onResponse) {
-    console.log("Update person")
     let data = setPersonForm(onResponse);
-    console.log(data);
     $.post(
         "/updatePerson",
         data,
@@ -75,14 +72,13 @@ function updatePerson(onResponse) {
 
 // ADD PERSON TO DATABASE
 function addPerson(onResponse) {
-    console.log("Add person")
     let data = setPersonForm(onResponse);
     $.post(
         "/addPerson", // Replace with your actual endpoint
         data,
         function(response) {
             getPeople();
-            clearForm();
+            clearPersonForm();
         },
         "json"
     );
@@ -90,7 +86,6 @@ function addPerson(onResponse) {
 }
 
 function removePerson(personId) {
-    console.log("Delete person: " + personId);
     const response = confirm("Are you sure you want to delete this record?")
     if (response) {
         $.post(
@@ -98,7 +93,7 @@ function removePerson(personId) {
             "{personId: " + personId + "}",
             function () {
                 getPeople();
-                clearForm();
+                clearPersonForm();
             },
             "json"
         )
@@ -139,27 +134,27 @@ function onGetPeopleResponse(response) {
             $(".btn-remove").css("display", "none");
             $.post(
                 "/getPerson",
-                "{recordId: " + $(this).data("id") + "}",
+                "{personId: " + $(this).data("id") + "}",
                 function (data, status, xhr) {
-                    clearForm();
+                    clearPersonForm();
+                    clearAddressForm();
                 },
                 "json"
             );
         // if not selected, unset previous and select current
         } else {
-            // unset previous record first
+            let personId = $(this).data("id")
             $(".record-element.selected").removeClass("selected");
-            //$(".edit-container-table").data("id",$(this).data("id"));
             $(this).addClass("selected")
-            $(".edit-container-table").attr("data-id",$(this).data("id"));
-            $(".edit-container-buttons").attr("data-id",$(this).data("id"));
+            $(".edit-container-table").attr("data-person-id", personId);
+            $(".edit-container-address-table").attr("data-person-id", personId);
             // $(this).addClass("selected");
             $(".btn-add").css("display", "none");
             $(".btn-update").removeAttr("style");
             $(".btn-remove").removeAttr("style");
             $.post(
                 "/getPerson",
-                "{recordId: " + $(this).data("id") + "}",
+                "{\"personId\": " + personId + "}",
                 function (data, status, xhr) {
                     //Set form values
                     $(".property-nickName").val(data.nickName);
@@ -172,14 +167,14 @@ function onGetPeopleResponse(response) {
                 },
                 "json"
             );
-            getAddresses($(this).data("id"))
+            getAddresses(personId);
         }
     });
 }
 
 
 
-function clearForm() {
+function clearPersonForm() {
     // Clear form
     $(".edit-container-table").data("id",null)
     $(".property-nickName").val("");
@@ -194,38 +189,112 @@ function clearForm() {
     $(".btn-remove").css("display", "none");
 }
 
-function getAddresses(recordId) {
+function getAddresses(personId) {
     $.post(
         "/getAddresses",
-        "{recordId: " + recordId + "}",
+        "{personId: " + personId + "}",
         onGetAddressesSuccess
     )
 }
 
 function onGetAddressesSuccess(response) {
-    console.log(response)
+    clearAddressForm()
     $(".edit-container-address-list").empty()
     let addresses = response["addresses"]
     for (let address of addresses) {
-        console.log(address)
-        let p = $(`<p class="address-element" data-id="${address["addressId"]}">${address["addressLine1"]}</p>`);
+        let p = $(`<p class="address-element" data-address-id="${address["addressId"]}">${address["addressLine1"]}</p>`);
         $(".edit-container-address-list").append(p);
     }
     onGetAddressesResponse(response)
 }
 
 function onGetAddressesResponse(response) {
+    $(".address-element").on("click", function() {
+       if ($(this).hasClass("selected")) {
+           $(this).removeClass("selected");
+           $(".btn-address-add").removeAttr("style");
+           $(".btn-address-update").css("display", "none");
+           $(".btn-address-remove").css("display", "none");
+           clearAddressForm();
+       } else {
+           $(".address-element").removeClass("selected");
+           $(this).addClass("selected");
+           $(".btn-address-add").css("display", "none");
+           $(".btn-address-update").removeAttr("style");
+           $(".btn-address-remove").removeAttr("style");
+           $(".edit-container-address-table").attr("data-address-id",$(this).data("address-id"));
+           $.post(
+               "/getAddress",
+               "{addressId: " + $(this).data("address-id") + ", personId: " + $(this).data("person-id") + "}",
+               function(response) {
+                   $(".property-addressLine1").val(response.addressLine1)
+                   $(".property-addressLine2").val(response.addressLine2)
+                   $(".property-addressLine3").val(response.addressLine3)
+                   $(".property-city").val(response.city)
+                   $(".property-county").val(response.county)
+                   $(".property-country").val(response.country)
+                   $(".property-postcode").val(response.postcode)
+               }
+           )
+       }
+    });
+}
+
+function clearAddressForm() {
+    $(".edit-container-address-table").data("id",null);
+    $(".property-addressLine1").val("");
+    $(".property-addressLine2").val("");
+    $(".property-addressLine3").val("");
+    $(".property-city").val("");
+    $(".property-county").val("");
+    $(".property-country").val("");
+    $(".property-postcode").val("");
+    $(".btn-address-add").removeAttr("style");
+    $(".btn-address-update").css("display", "none");
+    $(".btn-address-remove").css("display", "none");
+}
+
+function setAddressForm(response) {
+    let personId = $(".edit-container-table").attr("data-person-id")
+    let addressId = $(".edit-container-address-table").attr("data-address-id");
+    let addressLine1 = $(".property-addressLine1").val();
+    let addressLine2 = $(".property-addressLine2").val();
+    let addressLine3 = $(".property-addressLine3").val();
+    let city = $(".property-city").val();
+    let county = $(".property-county").val();
+    let country = $(".property-country").val();
+    let postcode = $(".property-postcode").val();
+
+    let postData = {};
+    postData.personId = personId;
+    postData.addressId = addressId;
+    postData.addressLine1 = addressLine1;
+    postData.addressLine2 = addressLine2;
+    postData.addressLine3 = addressLine3;
+    postData.city = city;
+    postData.county = county;
+    postData.country = country;
+    postData.postcode = postcode;
+    let data = JSON.stringify(postData);
+    Object.keys(data).map((key) => (data[key] === null) ? data[key] = '-': data[key]);
+    return data;
+}
+function updateAddress(addressId) {
 
 }
 
-function updateAddress(recordId) {
+function removeAddress(addressId) {
 
 }
 
-function removeAddress(recordId) {
-
-}
-
-function addAddress(recordId) {
-
+function addAddress(personId) {
+    let data = setAddressForm(personId);
+    $.post(
+        "/addAddress",
+        data,
+        function() {
+            getAddresses($(".edit-container-address-table").data("person-id"));
+            clearAddressForm();
+        }
+    )
 }
