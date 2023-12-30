@@ -15,7 +15,6 @@
     flex: 1;
     padding: 4px;
     margin-right: 4px;
-
     border: 2px solid var(--container-border-color);
 }
 
@@ -40,7 +39,12 @@ record-list-footer {
 }
 
 .record-edit-container {
-    flex: 1;
+    flex: 3;
+
+    display: flex;
+    grid-template-columns: max-content max-content;
+    grid-gap: 5px;
+    padding: 4px;
 
     border: 2px solid var(--container-border-color);
 }
@@ -54,6 +58,16 @@ record-list-footer {
 
 .edit-container-table label {
     text-align: right;
+}
+
+.edit-container {
+    flex: 1;
+    border: 2px solid var(--container-border-color);
+}
+
+.list-container {
+    flex: 1;
+    border: 2px solid var(--container-border-color);
 }
 
 .message {
@@ -88,5 +102,21 @@ record-list-footer {
 }
 
 .address-element:hover {
+    color: var(--selector-color-hover);
+}
+
+.list-address-element {
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--selector-color-unselected);
+}
+
+.list-address-element.selected {
+    color: var(--selector-color-selected);
+    text-decoration: underline;
+}
+
+.list-address-element:hover {
     color: var(--selector-color-hover);
 }

@@ -3,10 +3,8 @@ import com.google.gson.Gson;
 import com.jannetta.crmj.appj.controllers.IndexController;
 import com.jannetta.crmj.appj.nonhibernate.NonHibernateQueries;
 import com.jannetta.crmj.appj.util.JsonTransformer;
-import spark.Route;
 import spark.Spark;
 
-import java.util.HashMap;
 
 public class JRoot {
     JPropertiesManager propertiesManager = new JPropertiesManager();
@@ -27,7 +25,8 @@ public class JRoot {
         Spark.post("/getAddresses", NonHibernateQueries::getAddresses);
         Spark.post("/getAddress", NonHibernateQueries::getAddress);
         Spark.post("/addAddress", NonHibernateQueries::addAddress);
-
+        Spark.post("/removeLinkedAddress", NonHibernateQueries::removeLinkedAddress);
+        Spark.post("/updateAddress", NonHibernateQueries::updateAddress);
     }
 
 

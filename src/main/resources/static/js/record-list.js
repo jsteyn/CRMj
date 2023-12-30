@@ -328,6 +328,11 @@ class RecordList {
         );
     }
 
+    /**
+     * On receiving record count ... TODO add proper description
+     * @param onResponse
+     * @param response
+     */
     onRetrieveRecordCount(onResponse, response) {
         this.recordCount = response["count"];
         this.paginator.setNumPages(Math.ceil(this.recordCount / this.listAmount));

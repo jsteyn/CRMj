@@ -6,7 +6,7 @@
     <div>
         <span class="button-bar" id="record-count">$count</span>
         <button onclick="getPeople()">Refresh</button>
-        <button onclick="clearPersonForm()">Add New Person</button>
+        <button onclick="resetForAdd()">Add New Person</button>
     </div>
 
     <div id="person-record-list" class="record-container">
@@ -17,57 +17,59 @@
             </div>
         </div>
         <div class="record-edit-container">
-            <div class="edit-container-table">
-                <label>Nickname:</label>
-                <input class="property-nickName" type="text">
-                <label>First Name:</label>
-                <input class="property-firstName" type="text">
-                <label>Middle Names:</label>
-                <input class="property-middleNames" type="text">
-                <label>Last Name:</label>
-                <input class="property-lastName" type="text">
-                <label>Maiden Name:</label>
-                <input class="property-maidenName" type="text">
-                <label>Title:</label>
-                <input class="property-title" type="text">
-                <label>Birthday:</label>
-                <input class="property-dateOfBirth" type="date">
-            </div>
-            <div class="edit-container-buttons">
-                <button class="btn-update" style="display: none;">Update</button>
-                <button class="btn-remove" onclick="removePerson($(this).parent().data(`id`))" style="display: none;">Remove</button>
-                <button class="btn-add">Add</button>
-            </div>
-            <div class="edit-container-message">
-                <div id="message" class="message">&nbsp;</div>
-            </div>
-            <div class="edit-container-address-table">
-                <label>Address line 1:</label>
-                <input class="property-addressLine1" type="text">
-                <label>Address line 2:</label>
-                <input class="property-addressLine2" type="text">
-                <label>Address line 3:</label>
-                <input class="property-addressLine3" type="text">
-                <label>City:</label>
-                <input class="property-city" type="text">
-                <label>County:</label>
-                <input class="property-county" type="text">
-                <label>Country:</label>
-                <input class="property-country" type="text">
-                <label>Post code:</label>
-                <input class="property-postcode" type="text">
-            </div>
-            <div class="edit-container-address-buttons">
-                <button class="btn-address-update" onclick="updateAddress()" style="display: none;">Update</button>
-                <button class="btn-address-remove" onclick="removeAddress($(this).parent().data(`id`))" style="display: none;">Remove</button>
-                <button class="btn-address-add" onclick="addAddress($(this).parent().data(`person-id`))">Add</button>
-            </div>
-            <div class="edit-container-address-list">
+            <div class="edit-container">
+                <div class="edit-container-table">
+                    <label>Nickname:</label>
+                    <input class="property-nickName" type="text">
+                    <label>First Name:</label>
+                    <input class="property-firstName" type="text">
+                    <label>Middle Names:</label>
+                    <input class="property-middleNames" type="text">
+                    <label>Last Name:</label>
+                    <input class="property-lastName" type="text">
+                    <label>Maiden Name:</label>
+                    <input class="property-maidenName" type="text">
+                    <label>Title:</label>
+                    <input class="property-title" type="text">
+                    <label>Birthday:</label>
+                    <input class="property-dateOfBirth" type="date">
+                </div>
+                <div class="edit-container-buttons">
+                    <button class="btn-update" style="display: none;">Update</button>
+                    <button class="btn-remove" onclick="removePerson($(this).parent().data(`id`))" style="display: none;">Remove</button>
+                    <button class="btn-add">Add</button>
+                </div>
+                <div class="edit-container-message">
+                    <div id="message" class="message">&nbsp;</div>
+                </div>
+                <div class="edit-container-address-table">
+                    <label>Address line 1:</label>
+                    <input class="property-addressLine1" type="text">
+                    <label>Address line 2:</label>
+                    <input class="property-addressLine2" type="text">
+                    <label>Address line 3:</label>
+                    <input class="property-addressLine3" type="text">
+                    <label>City:</label>
+                    <input class="property-city" type="text">
+                    <label>County:</label>
+                    <input class="property-county" type="text">
+                    <label>Country:</label>
+                    <input class="property-country" type="text">
+                    <label>Post code:</label>
+                    <input class="property-postcode" type="text">
+                </div>
+                <div class="edit-container-address-buttons">
+                    <button class="btn-address-update" onclick="updateAddress()" style="display: none;">Update</button>
+                    <button class="btn-address-remove" onclick="removeLinkedAddress()" style="display: none;">Remove</button>
+                    <button class="btn-address-add" onclick="addAddress($(this).parent().data(`person-id`), 0)">Add New</button>
+                    <button class="btn-address-add-selected">Add Selected</button>
+                </div>
+                <div class="edit-container-address-list">
 
+                </div>
             </div>
+            <div class="list-container"></div>
         </div>
     </div>
     <script src="js/jpeople.js"></script>
-    <script>
-    </script>
 #end

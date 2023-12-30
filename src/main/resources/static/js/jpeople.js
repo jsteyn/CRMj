@@ -1,6 +1,6 @@
 let recordLimit = 20;
 let recordIndex = 0;
-
+let count = 0;
 let paginator = new Paginator($("#record-list-paginator"),function (new_index, old_index) {
     recordIndex = new_index * recordLimit;
     getPeople()
@@ -8,16 +8,23 @@ let paginator = new Paginator($("#record-list-paginator"),function (new_index, o
 getPersonCount();
 
 // BUTTON ACTIONS
+// Updated the selected person record
 let updateBtn = $(`.btn-update`);
 updateBtn.on("click", updatePerson);
-let removeBtn = $(`.btn-remove`);
-// removeBtn.on("click", removePerson.bind(null, $(".edit-container-table").attr(`data-id`)));
+// Remove the selected person
+// let removeBtn = $(`.btn-remove`);
+// removeBtn.on("click", removeLinkedAddress);
+// Add a new person
 let addBtn = $(`.btn-add`);
 addBtn.on("click", addPerson);
+// Append an address to the list of addresses for a person
+let addAddressBtn = $(`.btn-address-add-selected`);
+addAddressBtn.on("click", appendAddress);
 
-function setPersonForm(onResponse) {
+function setPersonForm() {
     // Collect data from input fields
-    let personId = $(".edit-container-table").attr("data-id");
+    console.log("setPersonForm");
+    let personId = $(".edit-container-table").attr("data-person-id");
     let dateOfBirth = $(".property-dateOfBirth").val();
     let firstName = $(".property-firstName").val();
     let lastName = $(".property-lastName").val();
@@ -44,12 +51,14 @@ function setPersonForm(onResponse) {
 }
 
 // GET NUMBER OF PERSON RECORDS
-function getPersonCount(onResponse) {
+function getPersonCount() {
+    console.log("getPersonCount");
     $.post(
         "/getPersonCount",
         null,
         function(response) {
             let recordCount = response["record_count"];
+            count = recordCount;
             paginator.setNumPages(recordCount / recordLimit);
         }
     )
@@ -57,6 +66,7 @@ function getPersonCount(onResponse) {
 
 // UPDATE EXISTING PERSON
 function updatePerson(onResponse) {
+    console.log("updatePerson");
     let data = setPersonForm(onResponse);
     $.post(
         "/updatePerson",
@@ -72,13 +82,15 @@ function updatePerson(onResponse) {
 
 // ADD PERSON TO DATABASE
 function addPerson(onResponse) {
+    console.log("addPerson");
     let data = setPersonForm(onResponse);
     $.post(
-        "/addPerson", // Replace with your actual endpoint
+        "/addPerson",
         data,
         function(response) {
             getPeople();
             clearPersonForm();
+            clearAddressForm();
         },
         "json"
     );
@@ -86,6 +98,7 @@ function addPerson(onResponse) {
 }
 
 function removePerson(personId) {
+    console.log("removePerson");
     const response = confirm("Are you sure you want to delete this record?")
     if (response) {
         $.post(
@@ -101,16 +114,17 @@ function removePerson(personId) {
 }
 // LOAD AND DISPLAY PEOPLE IN DIV
 function getPeople(onResponse) {
+    console.log("getPeople");
     $.post(
         "/getPeople",
         `{"begin": ${recordIndex}, "amount": ${recordLimit}}`,
         onGetPeopleSuccess,
-        "json",
+        "json"
     );
 }
 
 function onGetPeopleSuccess(response) {
-    // let record_list_container = document.getElementById("record-list-container");
+    console.log("onGetPeopleSuccess");
     $("#record-list-container").empty();
     let people = response["people"]
     for (let person of people) {
@@ -125,6 +139,7 @@ function onGetPeopleSuccess(response) {
 }
 
 function onGetPeopleResponse(response) {
+    console.log("onGetPeopleResponse")
     $(".record-element").on("click", function () {
         // if selected then unselect
         if ($(this).hasClass("selected")) {
@@ -172,9 +187,15 @@ function onGetPeopleResponse(response) {
     });
 }
 
+function resetForAdd() {
+    clearAddressForm();
+    clearPersonForm();
+    // TODO: unselect, name, linked address and address list
+}
 
 
 function clearPersonForm() {
+    console.log("clearPersonForm");
     // Clear form
     $(".edit-container-table").data("id",null)
     $(".property-nickName").val("");
@@ -189,59 +210,82 @@ function clearPersonForm() {
     $(".btn-remove").css("display", "none");
 }
 
+/**
+ * Get a list of addresses linked to a specific person
+ * @param personId
+ */
 function getAddresses(personId) {
+    console.log("getAddresses");
     $.post(
         "/getAddresses",
         "{personId: " + personId + "}",
-        onGetAddressesSuccess
+        function(response) {
+            clearAddressForm();
+            onGetAddressesSuccess(response);
+        }
     )
 }
 
 function onGetAddressesSuccess(response) {
-    clearAddressForm()
+    console.log("onGetAddressesSuccess");
+    // clearAddressForm()
+    updateListOfAddresses();
     $(".edit-container-address-list").empty()
-    let addresses = response["addresses"]
+    let addresses = response["addresses"];
     for (let address of addresses) {
-        let p = $(`<p class="address-element" data-address-id="${address["addressId"]}">${address["addressLine1"]}</p>`);
+                let p = $(`<p class="address-element" data-address-id="${address["addressId"]}">${address["addressLine1"]}</p>`);
         $(".edit-container-address-list").append(p);
     }
-    onGetAddressesResponse(response)
+    onGetAddressesResponse(response);
 }
 
 function onGetAddressesResponse(response) {
+    console.log("onGetAddressesResponse");
     $(".address-element").on("click", function() {
-       if ($(this).hasClass("selected")) {
+       if ($(this).hasClass("selected")) { // if address is selected, unselect it
+           console.log("onGetAddressResponse - selected")
            $(this).removeClass("selected");
            $(".btn-address-add").removeAttr("style");
            $(".btn-address-update").css("display", "none");
            $(".btn-address-remove").css("display", "none");
-           clearAddressForm();
-       } else {
-           $(".address-element").removeClass("selected");
+           $(".btn-address-add-selected").css("display", "none")
+           $(".edit-container-address-table").removeAttr("data-address-id");
+           clearAddressForm()
+       } else { // if not selected, unset previous and select current
+           console.log("onGetAddressResponse - not selected");
+           $(".address-element.selected").removeClass("selected");
            $(this).addClass("selected");
            $(".btn-address-add").css("display", "none");
            $(".btn-address-update").removeAttr("style");
            $(".btn-address-remove").removeAttr("style");
            $(".edit-container-address-table").attr("data-address-id",$(this).data("address-id"));
+           $(".btn-address-add-selected").css("display", "none")
+           listContainerState();
            $.post(
                "/getAddress",
                "{addressId: " + $(this).data("address-id") + ", personId: " + $(this).data("person-id") + "}",
-               function(response) {
-                   $(".property-addressLine1").val(response.addressLine1)
-                   $(".property-addressLine2").val(response.addressLine2)
-                   $(".property-addressLine3").val(response.addressLine3)
-                   $(".property-city").val(response.city)
-                   $(".property-county").val(response.county)
-                   $(".property-country").val(response.country)
-                   $(".property-postcode").val(response.postcode)
-               }
+               setAddressForm
            )
        }
     });
 }
 
+function setAddressForm(response) {
+    console.log("SetAddressForm");
+    let personId = $(".edit-container-table").attr("data-person-id")
+    let addressId = $(".edit-container-address-table").attr("data-address-id");
+    $(".property-addressLine1").val(response.addressLine1);
+    $(".property-addressLine2").val(response.addressLine2);
+    $(".property-addressLine3").val(response.addressLine3);
+    $(".property-city").val(response.city);
+    $(".property-county").val(response.county);
+    $(".property-country").val(response.country);
+    $(".property-postcode").val(response.postcode);
+}
+
 function clearAddressForm() {
-    $(".edit-container-address-table").data("id",null);
+    console.log("clearAddressForm");
+    $(".edit-container-address-table").data("id", null);
     $(".property-addressLine1").val("");
     $(".property-addressLine2").val("");
     $(".property-addressLine3").val("");
@@ -252,9 +296,73 @@ function clearAddressForm() {
     $(".btn-address-add").removeAttr("style");
     $(".btn-address-update").css("display", "none");
     $(".btn-address-remove").css("display", "none");
+    $(".btn-address-add-selected").css("display", "none")
 }
 
-function setAddressForm(response) {
+function updateListOfAddresses() {
+    console.log("updateListOfAddresses");
+    $.post(
+        "/getAddresses",
+        "{\"personId\": 0}",
+        function(response) {
+            getListOfAddresses(response);
+        }
+    )
+}
+
+/**
+ * Get a list of all the addresses in the database
+ * @param response
+ */
+function getListOfAddresses(response) {
+    console.log("getListOfAddresses")
+    $(".list-container").empty()
+    let addresses = response["addresses"]
+    for (let address of addresses) {
+        let p = $(`<p class="list-address-element" data-address-id="${address["addressId"]}">${address["addressLine1"]}</p>`);
+        $(".list-container").append(p);
+        p.on("click", onClickListElement.bind(p));
+    }
+}
+
+/**
+ * Add an onClick response to each address element
+ */
+function onClickListElement() {
+    console.log("onClickListElement");
+    if ($(this).hasClass("selected")) { // if address is selected, unselect it
+        console.log("onClickListElement - selected")
+        $(".edit-container-address-table").removeAttr("data-address-id");
+        $(this).removeClass("selected");
+        clearAddressForm();
+    } else { // if not selected, unset previous and select current
+        console.log("onClickListElement - not selected")
+        let addressTable = $(".edit-container-address-table");
+        addressTable.attr("data-address-id",$(this).data("address-id"));
+        $(".list-address-element").removeClass("selected");
+        $(this).addClass("selected");
+        let addressId = addressTable.attr("data-address-id");
+        console.log(addressId);
+        $.post(
+            "/getAddress",
+            "{addressId: " + addressId + "}",
+            setAddressForm
+        );
+        editContainerAddressListState();
+    }
+    $(".btn-address-add").css("display", "none");
+    $(".btn-address-update").css("display", "none");
+    $(".btn-address-remove").css("display", "none");
+    $(".btn-address-add-selected").removeAttr("style");
+
+}
+
+/**
+ * Fill the form with the data from response
+ * @returns {string}
+ */
+function retrieveAddressFromForm() {
+    console.log("retrieveAddressFromForm")
     let personId = $(".edit-container-table").attr("data-person-id")
     let addressId = $(".edit-container-address-table").attr("data-address-id");
     let addressLine1 = $(".property-addressLine1").val();
@@ -279,22 +387,83 @@ function setAddressForm(response) {
     Object.keys(data).map((key) => (data[key] === null) ? data[key] = '-': data[key]);
     return data;
 }
-function updateAddress(addressId) {
-
+function updateAddress() {
+    console.log("updateAddress");
+    let addressId = $(".edit-container-address-table").attr("data-address-id");
+    let data = retrieveAddressFromForm();
+    $.post(
+        "/updateAddress",
+        data,
+        function() {
+            console.log("Updated");
+            getAddresses($(".edit-container-address-table").attr("data-address-id"));
+        }
+    )
 }
 
-function removeAddress(addressId) {
-
+function removeAddress() {
+    console.log("removeAddress");
 }
 
-function addAddress(personId) {
-    let data = setAddressForm(personId);
+function addAddress() {
+    console.log("addAddress");
+    $(".edit-container-address-table").attr("data-address-id",0);
+    let data = retrieveAddressFromForm();
+    console.log(data);
     $.post(
         "/addAddress",
         data,
         function() {
             getAddresses($(".edit-container-address-table").data("person-id"));
             clearAddressForm();
+        }
+    )
+}
+
+function appendAddress() {
+    console.log("appendAddress");
+    let addressTable = $(".edit-container-address-table");
+    let personId = addressTable.attr("data-person-id");
+    let addressId = addressTable.attr("data-address-id");
+    console.log("Append address " + addressId + " for " + personId);
+    $.post(
+        "/addAddress",
+        "{\"addressId\": " + addressId + ",\"personId\": " + personId + "}",
+        function() {
+            console.log("Address " + addressId + " appended to " + personId);
+        }
+    )
+    getAddresses(personId)
+}
+
+
+function editContainerAddressListState() {
+    console.log("editContainerAddressListState")
+    let container = $(".edit-container-address-list");
+    container.children().removeClass("selected");
+}
+
+function listContainerState() {
+    console.log("listContainerState")
+    let container = $(".list-container");
+    container.children().removeClass("selected");
+}
+
+/**
+ * Remove record from person_addresses that links the person and the address
+ */
+function removeLinkedAddress() {
+    let addressTable = $(".edit-container-address-table")
+    let personId = addressTable.attr("data-person-id");
+    let addressId = addressTable.attr("data-address-id");
+    console.log("removeLinkedAddress: Remove address link: " + personId + " to " + addressId);
+    $.post(
+        "/removeLinkedAddress",
+        "{personId: " + personId + ", addressId: " + addressId + "}",
+        function() {
+            clearAddressForm();
+            updateListOfAddresses();
+            getAddresses(personId);
         }
     )
 }
