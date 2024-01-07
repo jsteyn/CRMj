@@ -98,7 +98,7 @@ function addPerson(onResponse) {
 }
 
 function removePerson(personId) {
-    console.log("removePerson");
+    console.log("removePerson: ", personId);
     const response = confirm("Are you sure you want to delete this record?")
     if (response) {
         $.post(
@@ -161,7 +161,7 @@ function onGetPeopleResponse(response) {
             let personId = $(this).data("id")
             $(".record-element.selected").removeClass("selected");
             $(this).addClass("selected")
-            $(".edit-container-table").attr("data-person-id", personId);
+            $(".edit-container").attr("data-person-id", personId);
             $(".edit-container-address-table").attr("data-person-id", personId);
             // $(this).addClass("selected");
             $(".btn-add").css("display", "none");

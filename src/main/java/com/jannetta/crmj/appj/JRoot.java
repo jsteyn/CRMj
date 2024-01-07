@@ -1,7 +1,9 @@
 package com.jannetta.crmj.appj;
 import com.google.gson.Gson;
 import com.jannetta.crmj.appj.controllers.IndexController;
+import com.jannetta.crmj.appj.nonhibernate.AddressQueries;
 import com.jannetta.crmj.appj.nonhibernate.NonHibernateQueries;
+import com.jannetta.crmj.appj.nonhibernate.PersonQueries;
 import com.jannetta.crmj.appj.util.JsonTransformer;
 import spark.Spark;
 
@@ -16,17 +18,17 @@ public class JRoot {
         Spark.staticFiles.location("/static");
 
         Spark.get("/", IndexController.serveIndexPage);
-        Spark.post("/getPeople", NonHibernateQueries::getPeople);
-        Spark.post("/getPerson", NonHibernateQueries::getPerson, new JsonTransformer());
-        Spark.post("/addPerson", NonHibernateQueries::addPerson);
-        Spark.post("/removePerson", NonHibernateQueries::removePerson);
-        Spark.post("/updatePerson", NonHibernateQueries::updatePerson);
-        Spark.post("/getPersonCount", NonHibernateQueries::getPersonCount);
-        Spark.post("/getAddresses", NonHibernateQueries::getAddresses);
-        Spark.post("/getAddress", NonHibernateQueries::getAddress);
-        Spark.post("/addAddress", NonHibernateQueries::addAddress);
-        Spark.post("/removeLinkedAddress", NonHibernateQueries::removeLinkedAddress);
-        Spark.post("/updateAddress", NonHibernateQueries::updateAddress);
+        Spark.post("/getPeople", PersonQueries::getPeople);
+        Spark.post("/getPerson", PersonQueries::getPerson, new JsonTransformer());
+        Spark.post("/addPerson", PersonQueries::addPerson);
+        Spark.post("/removePerson", PersonQueries::removePerson);
+        Spark.post("/updatePerson", PersonQueries::updatePerson);
+        Spark.post("/getPersonCount", PersonQueries::getPersonCount);
+        Spark.post("/getAddresses", AddressQueries::getAddresses);
+        Spark.post("/getAddress", AddressQueries::getAddress);
+        Spark.post("/addAddress", AddressQueries::addAddress);
+        Spark.post("/removeLinkedAddress", AddressQueries::removeLinkedAddress);
+        Spark.post("/updateAddress", AddressQueries::updateAddress);
     }
 
 

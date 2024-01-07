@@ -36,7 +36,7 @@
                 </div>
                 <div class="edit-container-buttons">
                     <button class="btn-update" style="display: none;">Update</button>
-                    <button class="btn-remove" onclick="removePerson($(this).parent().data(`id`))" style="display: none;">Remove</button>
+                    <button class="btn-remove" onclick="removePerson($(`.edit-container`).data(`person-id`))" style="display: none;">Remove</button>
                     <button class="btn-add">Add</button>
                 </div>
                 <div class="edit-container-message">
